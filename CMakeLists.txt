@@ -16,7 +16,17 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(raylib)
 
-add_executable(game_exe source/main.cpp)
+add_executable(game_exe
+    source/main.cpp
+    source/Game.cpp
+    
+    components/input/InputManager.cpp
+    components/entity/Entity.cpp
+    components/entity/Player.cpp
+    
+    ui/Renderer.cpp
+    ui/Window.cpp)
+
 target_include_directories(game_exe PRIVATE include ui/include)
 target_compile_features(game_exe PRIVATE cxx_std_17)
 target_link_libraries(game_exe PRIVATE raylib)

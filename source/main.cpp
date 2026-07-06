@@ -1,19 +1,9 @@
-#include <raylib.h>
-#include <iostream>
+#include "Game.hpp"
 
-int main() {
-    std::cout << "Hello" << std::endl;
-    InitWindow(800, 600, "title");
-    SetTargetFPS(60);
+int main()
+{
+    Game game;
+    game.run();
 
-    while(!WindowShouldClose()) {
-        BeginDrawing();
-
-        ClearBackground(SKYBLUE);
-
-        EndDrawing();
-    }
-
-    CloseWindow();
     return 0;
 }
