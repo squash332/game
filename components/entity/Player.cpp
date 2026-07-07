@@ -3,7 +3,7 @@
 #include "Entity.hpp"
 
 Player::Player(std::string name)
-    : Entity(0.0f, 32.0f),
+    : Entity(50.0f, 100.0f),
     name_(name)
 {
   std::cout << "player constructor ran" << std::endl;

@@ -2,7 +2,7 @@
 
 // WINDOW
 constexpr int VIRTUAL_WIDTH  = 320;
-constexpr int VIRTUAL_HEIGHT = 256;
+constexpr int VIRTUAL_HEIGHT = 180;
 constexpr int TILE_SIZE      = 32;
 
 // BUTTONS
