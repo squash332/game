@@ -10,6 +10,7 @@ public:
     void update() override;
     void setDirection(Direction dir);
     void confirmMove();
+    void addDirection(Direction dir);
 
 private:
     std::string name_;

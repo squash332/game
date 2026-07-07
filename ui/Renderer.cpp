@@ -1,4 +1,5 @@
 #include "Renderer.hpp"
+#include <cmath>
 
 Renderer::Renderer()
 {
@@ -10,6 +11,7 @@ Renderer::~Renderer()
     UnloadTexture(player_sprite_);
 }
 
-void Renderer::drawPlayer(const Player& player) {
+void Renderer::drawPlayer(const Player &player)
+{
     DrawTexture(player_sprite_, player.getX(), player.getY(), RAYWHITE);
 }

@@ -9,8 +9,10 @@ void InputManager::bind(int key, std::function<void()> action)
 
 void InputManager::update()
 {
-  for (auto const& [key, action] : keybinds_) {
-    if (IsKeyPressed(key)) {
+  for (auto const &[key, action] : keybinds_)
+  {
+    if (IsKeyDown(key))
+    {
       action();
     }
   }

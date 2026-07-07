@@ -1,29 +1,40 @@
 #include "Game.hpp"
 
-Game::Game() {
+Game::Game()
+{
     game_window_ = std::make_unique<Window>();
     player_ = std::make_unique<Player>("filip");
     input_ = std::make_unique<InputManager>();
     renderer_ = std::make_unique<Renderer>();
 
-    input_->bind(KEY_F10, [this] {game_window_->toggleFullscreen();});
-
+    input_->bind(KEY_F10, [this]
+                 { game_window_->toggleFullscreen(); });
+    input_->bind(KEY_W, [this]
+                 { player_->addDirection(Direction::Up); });
+    input_->bind(KEY_A, [this]
+                 { player_->addDirection(Direction::Left); });
+    input_->bind(KEY_S, [this]
+                 { player_->addDirection(Direction::Down); });
+    input_->bind(KEY_D, [this]
+                 { player_->addDirection(Direction::Right); });
 }
 
-void Game::run() {
+void Game::run()
+{
 
-    while(!game_window_->shouldClose()) {
+    while (!game_window_->shouldClose())
+    {
         input_->update();
+        player_->update();
+        player_->confirmMove();
+
         game_window_->beginFrame();
         ClearBackground(WHITE);
 
         renderer_->drawPlayer(*player_);
-        player_->update();
         std::cout << "updated player" << std::endl;
-        std::cout << player_->getX() <<  ","  << player_->getY() << std::endl;
-
+        std::cout << player_->getX() << "," << player_->getY() << std::endl;
 
         game_window_->endFrame();
     }
-
 }
