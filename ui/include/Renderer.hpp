@@ -2,6 +2,7 @@
 
 #include "raylib.h"
 #include "Player.hpp"
+#include "Map.hpp"
 
 class Renderer
 {
@@ -11,6 +12,7 @@ public:
     ~Renderer();
 
     void drawPlayer(const Player &other);
+    void drawMap(const Map &other);
 
 protected:
 private:

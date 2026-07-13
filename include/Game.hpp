@@ -10,6 +10,7 @@
 #include "Window.hpp"
 #include "Player.hpp"
 #include "Renderer.hpp"
+#include "Map.hpp"
 
 
 enum class GameState
@@ -36,5 +37,6 @@ private:
   std::unique_ptr<Window> game_window_;
   std::unique_ptr<InputManager> input_;
   std::unique_ptr<Player> player_;
+  std::unique_ptr<Map> map_;
   std::unique_ptr<Renderer> renderer_;
 };

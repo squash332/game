@@ -23,6 +23,7 @@ add_executable(game_exe
     components/input/InputManager.cpp
     components/entity/Entity.cpp
     components/entity/Player.cpp
+    components/map/Map.cpp
     
     ui/Renderer.cpp
     ui/Window.cpp)

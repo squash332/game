@@ -15,3 +15,7 @@ void Renderer::drawPlayer(const Player &player)
 {
     DrawTexture(player_sprite_, player.getX(), player.getY(), RAYWHITE);
 }
+
+void Renderer::drawMap(const Map &m)
+{
+}

@@ -6,6 +6,7 @@ Game::Game()
     player_ = std::make_unique<Player>("filip");
     input_ = std::make_unique<InputManager>();
     renderer_ = std::make_unique<Renderer>();
+    map_ = std::make_unique<Map>("res/testmap.json");
 
     input_->bind(KEY_F10, [this]
                  { game_window_->toggleFullscreen(); });
@@ -32,8 +33,8 @@ void Game::run()
         ClearBackground(WHITE);
 
         renderer_->drawPlayer(*player_);
-        std::cout << "updated player" << std::endl;
-        std::cout << player_->getX() << "," << player_->getY() << std::endl;
+        // std::cout << "updated player" << std::endl;
+        // std::cout << player_->getX() << "," << player_->getY() << std::endl;
 
         game_window_->endFrame();
     }
