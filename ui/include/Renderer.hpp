@@ -17,4 +17,5 @@ public:
 protected:
 private:
     Texture2D player_sprite_;
+    Texture2D map_;
 };

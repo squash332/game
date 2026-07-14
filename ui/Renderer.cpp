@@ -4,11 +4,13 @@
 Renderer::Renderer()
 {
     player_sprite_ = LoadTexture("res/me1.png");
+    map_ = LoadTexture("res/mainlevbuild.png");
 }
 
 Renderer::~Renderer()
 {
     UnloadTexture(player_sprite_);
+    UnloadTexture(map_);
 }
 
 void Renderer::drawPlayer(const Player &player)
