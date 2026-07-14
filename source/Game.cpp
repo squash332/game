@@ -32,6 +32,7 @@ void Game::run()
         game_window_->beginFrame();
         ClearBackground(WHITE);
 
+        renderer_->drawMap(*map_);
         renderer_->drawPlayer(*player_);
         // std::cout << "updated player" << std::endl;
         // std::cout << player_->getX() << "," << player_->getY() << std::endl;
