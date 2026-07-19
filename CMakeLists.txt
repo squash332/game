@@ -24,6 +24,7 @@ add_executable(game_exe
     components/entity/Entity.cpp
     components/entity/Player.cpp
     components/map/Map.cpp
+    components/camera/Camera.cpp
     
     ui/Renderer.cpp
     ui/Window.cpp)

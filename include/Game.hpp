@@ -11,6 +11,7 @@
 #include "Player.hpp"
 #include "Renderer.hpp"
 #include "Map.hpp"
+#include "Camera.hpp"
 
 
 enum class GameState
@@ -39,4 +40,5 @@ private:
   std::unique_ptr<Player> player_;
   std::unique_ptr<Map> map_;
   std::unique_ptr<Renderer> renderer_;
+  std::unique_ptr<Cam2d> cam_;
 };

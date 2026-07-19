@@ -7,6 +7,7 @@ Game::Game()
     input_ = std::make_unique<InputManager>();
     renderer_ = std::make_unique<Renderer>();
     map_ = std::make_unique<Map>("res/testmap.json");
+    cam_ = std::make_unique<Cam2d>();
 
     input_->bind(KEY_F10, [this]
                  { game_window_->toggleFullscreen(); });
@@ -27,16 +28,21 @@ void Game::run()
     {
         input_->update();
         player_->update();
+        // cam_-> 
+        // TODO MAKE FUNCTION FOR CAM FOLLOWING PLAYER ^ 
         player_->confirmMove();
-
+        
+        
         game_window_->beginFrame();
+        cam_->beginFrame();
         ClearBackground(WHITE);
-
+        
         renderer_->drawMap(*map_);
         renderer_->drawPlayer(*player_);
+        cam_->update(player_->getX(), player_->getY());
         // std::cout << "updated player" << std::endl;
         // std::cout << player_->getX() << "," << player_->getY() << std::endl;
-
+        cam_->endFrame();
         game_window_->endFrame();
     }
 }
