@@ -44,8 +44,10 @@ void Player::setDirection(Direction dir)
     direction_ = dir;
 }
 
+// low quality movement constraints using only < 0 for x and y to check bounds. REFACTOR LATER.
 void Player::confirmMove()
-{
+{   
+    if(next_x_ < 0 || next_y_ < 0 ) return;
     x_ = next_x_;
     y_ = next_y_;
 }

@@ -86,6 +86,13 @@ Map::Map(const char *filepath)
     std::cout << "MAP: INSTANTIATED" << std::endl;
 }
 
+/**
+ * Ideally each tile layer has a property which will determine if certain tiles 
+ * from that layer are walkable or not.
+ */
+bool Map::isWalkable() {
+}
+
 Map::~Map()
 {
     cute_tiled_free_map(map_);

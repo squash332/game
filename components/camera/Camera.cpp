@@ -16,9 +16,9 @@ void Cam2d::beginFrame() {
 
 // Called with the player's position which the camera actively tracks.
 void Cam2d::update(float player_x, float player_y) {
-    camera_.target = (Vector2){ player_x + TILE_SIZE /2, player_y + TILE_SIZE /2};
-    DrawLine((int)camera_.target.x, -VIRTUAL_HEIGHT*10, (int)camera_.target.x, VIRTUAL_HEIGHT*10, GREEN);
-    DrawLine(-VIRTUAL_WIDTH*10, (int)camera_.target.y, VIRTUAL_WIDTH*10, (int)camera_.target.y, GREEN);
+    camera_.target = { player_x + TILE_SIZE /2, player_y + TILE_SIZE /2};
+    // DrawLine((int)camera_.target.x, -VIRTUAL_HEIGHT*10, (int)camera_.target.x, VIRTUAL_HEIGHT*10, GREEN);
+    // DrawLine(-VIRTUAL_WIDTH*10, (int)camera_.target.y, VIRTUAL_WIDTH*10, (int)camera_.target.y, GREEN);
     handleZoom();
 }
 

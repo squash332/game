@@ -13,7 +13,7 @@ Renderer::~Renderer()
 
 void Renderer::drawPlayer(const Player &player)
 {
-    DrawTexture(player_sprite_, player.getX(), player.getY(), RAYWHITE);
+    DrawTextureV(player_sprite_, {player.getX(), player.getY()}, RAYWHITE);
 }
 
 void Renderer::drawMap(const Map &m)
@@ -33,4 +33,8 @@ void Renderer::drawMap(const Map &m)
             DrawTextureRec(tile.texture, tile.rectangle, position, WHITE);
         }
     }
+}
+
+void Renderer::displayLogs() {
+    DrawFPS(0, 0);
 }

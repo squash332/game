@@ -23,26 +23,23 @@ Game::Game()
 
 void Game::run()
 {
-
     while (!game_window_->shouldClose())
     {
         input_->update();
         player_->update();
-        // cam_-> 
-        // TODO MAKE FUNCTION FOR CAM FOLLOWING PLAYER ^ 
         player_->confirmMove();
-        
-        
+        cam_->update(player_->getX(), player_->getY());
+
         game_window_->beginFrame();
+        ClearBackground(BLACK);
+        
         cam_->beginFrame();
-        ClearBackground(WHITE);
         
         renderer_->drawMap(*map_);
         renderer_->drawPlayer(*player_);
-        cam_->update(player_->getX(), player_->getY());
-        // std::cout << "updated player" << std::endl;
-        // std::cout << player_->getX() << "," << player_->getY() << std::endl;
+        std::cout << player_->getX() << "," << player_->getY() << std::endl;
         cam_->endFrame();
+        renderer_->displayLogs();
         game_window_->endFrame();
     }
 }

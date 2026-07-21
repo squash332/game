@@ -41,6 +41,8 @@ public:
     Map(const Map &other) = delete;
     ~Map();
 
+    bool isWalkable();
+
     uint32_t getCols() const;
     uint32_t getRows() const;
     const std::vector<TileLayer> &getTileLayers() const;
