@@ -10,9 +10,8 @@ Player::Player(std::string name)
     std::cout << "player constructor ran" << std::endl;
 }
 
-void Player::update()
+void Player::update(float delta)
 {
-
     next_x_ = x_;
     next_y_ = y_;
 
@@ -20,9 +19,8 @@ void Player::update()
     bool is_moving_horizontal = (direction_ & Direction::Right) || (direction_ & Direction::Left);
 
     // calculate diagonal step size
-    float DIAGONAL_INDEX = MOVEMENT_INDEX * (1 / sqrt(MOVEMENT_INDEX));
-
-    float step = (is_moving_vertical && is_moving_horizontal) ? DIAGONAL_INDEX : MOVEMENT_INDEX;
+    float DIAGONAL_INDEX = MOVEMENT_INDEX / sqrt(2.0f);
+    float step = ((is_moving_vertical && is_moving_horizontal) ? DIAGONAL_INDEX : MOVEMENT_INDEX) * delta;
 
     if (direction_ & Direction::Up)
         next_y_ -= step;
@@ -46,8 +44,9 @@ void Player::setDirection(Direction dir)
 
 // low quality movement constraints using only < 0 for x and y to check bounds. REFACTOR LATER.
 void Player::confirmMove()
-{   
-    if(next_x_ < 0 || next_y_ < 0 ) return;
+{
+    if (next_x_ < 0 || next_y_ < 0)
+        return;
     x_ = next_x_;
     y_ = next_y_;
 }

@@ -7,7 +7,7 @@ class Player : public Entity
 public:
     Player(std::string name);
 
-    void update() override;
+    void update(float delta);
     void setDirection(Direction dir);
     void confirmMove();
     void addDirection(Direction dir);

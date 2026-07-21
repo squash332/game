@@ -25,8 +25,10 @@ void Game::run()
 {
     while (!game_window_->shouldClose())
     {
+        float delta_time = GetFrameTime();
+
         input_->update();
-        player_->update();
+        player_->update(delta_time);
         player_->confirmMove();
         cam_->update(player_->getX(), player_->getY());
 
