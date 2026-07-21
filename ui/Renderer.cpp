@@ -13,28 +13,25 @@ Renderer::~Renderer()
 
 void Renderer::drawPlayer(const Player &player)
 {
-    DrawTextureV(player_sprite_, {player.getX(), player.getY()}, RAYWHITE);
+    DrawTextureV(player_sprite_, {floorf(player.getX()), floorf(player.getY())}, RAYWHITE);
 }
 
 void Renderer::drawMap(const Map &m)
 {
     for (const TileLayer &layer : m.getTileLayers())
     {
-        for (size_t i = 0; i < layer.tiles.size(); i++)
+        for (const Tile &tile : layer.tiles)
         {
-            const Tile &tile = layer.tiles[i];
             if (tile.id == 0)
                 continue;
 
-            int col = i % layer.width;
-            int row = i / layer.width;
-
-            Vector2 position = {(float)(col * TILE_SIZE), (float)(row * TILE_SIZE)};
+            Vector2 position = {(float)(tile.x * TILE_SIZE), (float)(tile.y * TILE_SIZE)};
             DrawTextureRec(tile.texture, tile.rectangle, position, WHITE);
         }
     }
 }
 
-void Renderer::displayLogs() {
+void Renderer::displayLogs()
+{
     DrawFPS(0, 0);
 }

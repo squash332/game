@@ -9,6 +9,7 @@
 struct Tile
 {
     int id;
+    int x,y;
     Rectangle rectangle;
     Texture2D texture;
 };

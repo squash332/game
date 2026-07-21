@@ -46,33 +46,41 @@ Map::Map(const char *filepath)
 
     while (layer)
     {
-        TileLayer layer_temp;
-        // checks if current layer is of type tilelayer
-        if (strcmp(layer->type.ptr, "tilelayer") == 0)
+        cute_tiled_chunk_t *chunk = layer->chunks;
+        while (chunk)
         {
-            layer_temp.height = layer->height;
-            layer_temp.width = layer->width;
-            layer_temp.name = layer->name.ptr;
 
-            for (auto i = 0; i < layer->data_count; i++)
+            TileLayer layer_temp;
+            // checks if current layer is of type tilelayer
+            if (strcmp(layer->type.ptr, "tilelayer") == 0)
             {
-                Tile temp_tile;
-                temp_tile.id = layer->data[i];
+                layer_temp.height = chunk->height;
+                layer_temp.width = chunk->width;
+                layer_temp.name = layer->name.ptr;
 
-                if (temp_tile.id != 0)
+                for (auto i = 0; i < chunk->data_count; i++)
                 {
-                    const LoadedTileset *ts = findTileset(temp_tile.id);
-                    int localId = temp_tile.id - ts->firstgid;
-                    int col = localId % ts->columns;
-                    int row = localId / ts->columns;
+                    Tile temp_tile;
+                    temp_tile.id = chunk->data[i];
+                    temp_tile.x = chunk->x + (i % chunk->width);
+                    temp_tile.y = chunk->y + (i / chunk->width);
 
-                    temp_tile.rectangle = {(float)(col * TILE_SIZE), (float)(row * TILE_SIZE), (float)TILE_SIZE, (float)TILE_SIZE};
-                    temp_tile.texture = ts->texture;
+                    if (temp_tile.id != 0)
+                    {
+                        const LoadedTileset *ts = findTileset(temp_tile.id);
+                        int localId = temp_tile.id - ts->firstgid;
+                        int col = localId % ts->columns;
+                        int row = localId / ts->columns;
+
+                        temp_tile.rectangle = {(float)(col * TILE_SIZE), (float)(row * TILE_SIZE), (float)TILE_SIZE, (float)TILE_SIZE};
+                        temp_tile.texture = ts->texture;
+                    }
+
+                    layer_temp.tiles.push_back(temp_tile);
                 }
-
-                layer_temp.tiles.push_back(temp_tile);
+                tile_layer_.push_back(layer_temp);
+                chunk = chunk->next;
             }
-            tile_layer_.push_back(layer_temp);
         }
 
         if (strcmp(layer->type.ptr, "objectgroup") == 0)
@@ -87,10 +95,11 @@ Map::Map(const char *filepath)
 }
 
 /**
- * Ideally each tile layer has a property which will determine if certain tiles 
+ * Ideally each tile layer has a property which will determine if certain tiles
  * from that layer are walkable or not.
  */
-bool Map::isWalkable() {
+bool Map::isWalkable()
+{
 }
 
 Map::~Map()
@@ -109,7 +118,7 @@ uint32_t Map::getRows() const
     return height_;
 }
 
-const std::vector<TileLayer>& Map::getTileLayers() const
+const std::vector<TileLayer> &Map::getTileLayers() const
 {
     return tile_layer_;
 }

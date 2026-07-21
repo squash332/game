@@ -16,7 +16,7 @@ void Cam2d::beginFrame() {
 
 // Called with the player's position which the camera actively tracks.
 void Cam2d::update(float player_x, float player_y) {
-    camera_.target = { player_x + TILE_SIZE /2, player_y + TILE_SIZE /2};
+    camera_.target = { floorf(player_x + TILE_SIZE /2), floorf(player_y + TILE_SIZE /2)};
     // DrawLine((int)camera_.target.x, -VIRTUAL_HEIGHT*10, (int)camera_.target.x, VIRTUAL_HEIGHT*10, GREEN);
     // DrawLine(-VIRTUAL_WIDTH*10, (int)camera_.target.y, VIRTUAL_WIDTH*10, (int)camera_.target.y, GREEN);
     handleZoom();
@@ -28,7 +28,6 @@ void Cam2d::endFrame() {
 
 // Handles zooming out and zooming in.
 void Cam2d::handleZoom() {
-    if (camera_.zoom > 2.0f) camera_.zoom = 2.0f;
     if (camera_.zoom < 0.5f) camera_.zoom = 0.5f;
 
     camera_.zoom = expf(logf(camera_.zoom) + ((float)GetMouseWheelMove()*0.1f));
