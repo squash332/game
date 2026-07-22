@@ -18,4 +18,5 @@ public:
 protected:
 private:
     Texture2D player_sprite_;
+    float frame_width_;
 };

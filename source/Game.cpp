@@ -23,12 +23,21 @@ Game::Game()
 
 void Game::run()
 {
+    
     while (!game_window_->shouldClose())
     {
-        float delta_time = GetFrameTime();
+        delta_time = GetFrameTime();
+        timer += delta_time;
+
+        if(timer >= 0.2f) {
+            timer = 0.0f;
+            frame++;
+        }
+        frame = frame % 2;
+        std::cout << frame << std::endl;
 
         input_->update();
-        player_->update(delta_time);
+        player_->update(delta_time, frame);
         player_->confirmMove();
         cam_->update(player_->getX(), player_->getY(), delta_time);
 
@@ -45,3 +54,4 @@ void Game::run()
         game_window_->endFrame();
     }
 }
+

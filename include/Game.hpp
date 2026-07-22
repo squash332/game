@@ -13,24 +13,22 @@
 #include "Map.hpp"
 #include "Camera.hpp"
 
-
 enum class GameState
 {
-//   MainMenu,
-//   Playing,
-//   Pause,
-//   Dialogue,
-//   Transition
+  //   MainMenu,
+  //   Playing,
+  //   Pause,
+  //   Dialogue,
+  //   Transition
 };
 
 class Game
 {
 public:
   Game();
-  Game(const Game& other) = delete; // no multiple game instances
+  Game(const Game &other) = delete; // no multiple game instances
   ~Game() = default;
   void run();
-
 
 private:
   Texture2D sprite;
@@ -41,4 +39,7 @@ private:
   std::unique_ptr<Map> map_;
   std::unique_ptr<Renderer> renderer_;
   std::unique_ptr<Cam2d> cam_;
+
+  float timer, delta_time = 0.0f;
+  int frame = 0;
 };

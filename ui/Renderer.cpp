@@ -3,7 +3,8 @@
 
 Renderer::Renderer()
 {
-    player_sprite_ = LoadTexture("res/me1.png");
+    player_sprite_ = LoadTexture("res/fire-dragon.png");
+    frame_width_ = player_sprite_.width/NR_OF_FRAMES_IN_TEXTURE;
 }
 
 Renderer::~Renderer()
@@ -13,7 +14,14 @@ Renderer::~Renderer()
 
 void Renderer::drawPlayer(const Player &player)
 {
-    DrawTextureV(player_sprite_, {floorf(player.getX()), floorf(player.getY())}, RAYWHITE);
+    DrawTextureRec(player_sprite_, Rectangle{
+        (frame_width_ * player.frame_number_),
+        0,
+        player_sprite_.width/NR_OF_FRAMES_IN_TEXTURE,
+        player_sprite_.height},
+        {floorf(player.getX()), floorf(player.getY())},
+        RAYWHITE
+        );
 }
 
 void Renderer::drawMap(const Map &m)

@@ -10,8 +10,9 @@ Player::Player(std::string name)
     std::cout << "player constructor ran" << std::endl;
 }
 
-void Player::update(float delta)
+void Player::update(float delta, int frame)
 {
+    frame_number_ = frame;
     next_x_ = x_;
     next_y_ = y_;
 
