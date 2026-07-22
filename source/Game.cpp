@@ -30,7 +30,7 @@ void Game::run()
         input_->update();
         player_->update(delta_time);
         player_->confirmMove();
-        cam_->update(player_->getX(), player_->getY());
+        cam_->update(player_->getX(), player_->getY(), delta_time);
 
         game_window_->beginFrame();
         ClearBackground(BLACK);
@@ -39,7 +39,7 @@ void Game::run()
         
         renderer_->drawMap(*map_);
         renderer_->drawPlayer(*player_);
-        std::cout << player_->getX() << "," << player_->getY() << std::endl;
+        // std::cout << player_->getX() << "," << player_->getY() << std::endl;
         cam_->endFrame();
         renderer_->displayLogs();
         game_window_->endFrame();

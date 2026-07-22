@@ -12,7 +12,7 @@ public:
     ~Cam2d() = default;
 
     void beginFrame();
-    void update(float, float);
+    void update(float, float, float);
     void endFrame();
     void handleZoom();
     void resetZoom();
