@@ -19,6 +19,7 @@ const LoadedTileset *Map::findTileset(int gid)
 
 Map::Map(const char *filepath)
 {
+    std::filesystem::path mapDir = std::filesystem::path(filepath).parent_path();
     map_ = cute_tiled_load_map_from_file(filepath, nullptr);
 
     if (!map_)
@@ -27,9 +28,6 @@ Map::Map(const char *filepath)
         exit(1);
     }
 
-    width_ = map_->width;
-    height_ = map_->height;
-
     cute_tiled_tileset_t *tileset = map_->tilesets;
 
     while (tileset)
@@ -37,10 +35,20 @@ Map::Map(const char *filepath)
         LoadedTileset lt;
         lt.firstgid = tileset->firstgid;
         lt.columns = tileset->columns;
-        lt.texture = LoadTexture("res/mainlevbuild.png");
-        tilesets_.push_back(lt);
 
+        std::filesystem::path imagePath = (mapDir / tileset->image.ptr).lexically_normal();
+        lt.texture = LoadTexture(imagePath.string().c_str());
+
+        tilesets_.push_back(lt);
         tileset = tileset->next;
+    }
+    for (const auto &ts : tilesets_)
+    {
+        std::cout << "firstgid: " << ts.firstgid
+                  << ", columns: " << ts.columns
+                  << ", texture id: " << ts.texture.id
+                  << ", texture size: " << ts.texture.width << "x" << ts.texture.height
+                  << std::endl;
     }
     cute_tiled_layer_t *layer = map_->layers;
 
@@ -100,6 +108,7 @@ Map::Map(const char *filepath)
  */
 bool Map::isWalkable()
 {
+    return false;
 }
 
 Map::~Map()

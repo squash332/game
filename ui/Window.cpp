@@ -3,7 +3,7 @@
 Window::Window()
 {
   InitWindow(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, "Da Game");
-  SetTargetFPS(60);
+  SetTargetFPS(144);
   target_ = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 }
 
