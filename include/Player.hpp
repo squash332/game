@@ -15,6 +15,8 @@ public:
     float getWidth() const { return width_; }
     float getHeight() const { return height_; }
 
+    void attack();
+
     int frame_number_ = 0;
 
 private:

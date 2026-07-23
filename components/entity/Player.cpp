@@ -40,6 +40,11 @@ void Player::update(float delta, int frame)
     direction_ = Direction::None;
 }
 
+
+void Player::attack() {
+    // ATTACK BASED ON TARGET
+}
+
 void Player::setDirection(Direction dir)
 {
     direction_ = dir;

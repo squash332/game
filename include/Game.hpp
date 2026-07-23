@@ -36,15 +36,15 @@ public:
   bool debug_mode = false;
 
 private:
-  Texture2D sprite;
 
-  std::unique_ptr<Window> game_window_;
-  std::unique_ptr<InputManager> input_;
-  std::unique_ptr<Player> player_;
-  std::unique_ptr<Map> map_;
-  std::unique_ptr<Renderer> renderer_;
-  std::unique_ptr<Cam2d> cam_;
-  std::unique_ptr<Enemy> enemy_knight_;
+  Window game_window_;
+  InputManager input_;
+  Player player_;
+  Map map_;
+  Renderer renderer_;
+  Cam2d cam_;
+
+  std::vector<std::unique_ptr<Enemy>> enemies_;
 
   float timer, delta_time = 0.0f;
   int frame = 0;

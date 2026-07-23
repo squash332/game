@@ -2,6 +2,7 @@
 
 #include "Common.hpp"
 #include "Direction.hpp"
+#include "raylib.h"
 
 class Entity
 {
