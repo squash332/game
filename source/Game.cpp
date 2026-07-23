@@ -51,9 +51,12 @@ void Game::run()
         cam_.beginFrame();
 
         renderer_.drawMap(map_);
-        DrawCircleV({floorf(player_.getX() + player_.getWidth() / 2), floorf(player_.getY() + player_.getHeight() - TILE_SIZE / 4)}, TILE_SIZE / 2, Fade(RED, 0.3f));
+        renderer_.drawNameplate(player_);
+
         for (auto &enemy : enemies_)
         {
+            bool targeted = (current_target == enemy.get());
+            renderer_.drawNameplate(*enemy, targeted);
             renderer_.drawEnemy(*enemy);
         }
         renderer_.drawPlayer(player_);

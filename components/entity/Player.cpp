@@ -38,6 +38,7 @@ void Player::update(float delta, int frame)
         next_x_ -= step;
 
     direction_ = Direction::None;
+    DrawCircleV({floorf(getX() + getWidth() / 2), floorf(getY() + getHeight() - TILE_SIZE / 4)}, TILE_SIZE / 2, Fade(RED, 0.3f));
 }
 
 

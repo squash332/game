@@ -15,6 +15,7 @@ public:
     void drawPlayer(const Player &other);
     void drawMap(const Map &other);
     void drawEnemy(const Enemy &other);
+    void drawNameplate(const Entity &entity, bool isTargeted = false);
     
 protected:
 private:
