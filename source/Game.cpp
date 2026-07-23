@@ -9,17 +9,17 @@ Game::Game()
     map_ = std::make_unique<Map>("res/testmap.json");
     cam_ = std::make_unique<Cam2d>();
 
-    input_->bind(KEY_F10, [this]
+    input_->bindPressed(KEY_F10, [this]
                  { game_window_->toggleFullscreen(); });
-    input_->bind(KEY_W, [this]
+    input_->bindHeld(KEY_W, [this]
                  { player_->addDirection(Direction::Up); });
-    input_->bind(KEY_A, [this]
+    input_->bindHeld(KEY_A, [this]
                  { player_->addDirection(Direction::Left); });
-    input_->bind(KEY_S, [this]
+    input_->bindHeld(KEY_S, [this]
                  { player_->addDirection(Direction::Down); });
-    input_->bind(KEY_D, [this]
+    input_->bindHeld(KEY_D, [this]
                  { player_->addDirection(Direction::Right); });
-    input_->bind(KEY_T, [this]
+    input_->bindPressed(KEY_T, [this]
                  { toggleDebugMode(); });
 }
 
