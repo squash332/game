@@ -12,7 +12,13 @@ public:
     void confirmMove();
     void addDirection(Direction dir);
 
+    float getWidth() const { return width_; }
+    float getHeight() const { return height_; }
+
     int frame_number_ = 0;
+
 private:
     std::string name_;
+    float width_;
+    float height_;
 };

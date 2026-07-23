@@ -12,6 +12,7 @@
 #include "Renderer.hpp"
 #include "Map.hpp"
 #include "Camera.hpp"
+#include "Enemy.hpp"
 
 enum class GameState
 {
@@ -31,7 +32,7 @@ public:
   void run();
 
   void toggleDebugMode();
-  void displayLogs(const Map& m);
+  void displayLogs();
   bool debug_mode = false;
 
 private:
@@ -43,6 +44,7 @@ private:
   std::unique_ptr<Map> map_;
   std::unique_ptr<Renderer> renderer_;
   std::unique_ptr<Cam2d> cam_;
+  std::unique_ptr<Enemy> enemy_knight_;
 
   float timer, delta_time = 0.0f;
   int frame = 0;

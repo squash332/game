@@ -5,7 +5,9 @@
 
 Player::Player(std::string name)
     : Entity(50.0f, 100.0f),
-      name_(name)
+      name_(name),
+      width_(static_cast<float>(CHARACTER_WIDTH)),
+      height_(static_cast<float>(CHARACTER_HEIGHT))
 {
     std::cout << "player constructor ran" << std::endl;
 }
@@ -25,7 +27,7 @@ void Player::update(float delta, int frame)
 
     if (direction_ & Direction::Up)
         next_y_ -= step;
-
+ 
     if (direction_ & Direction::Down)
         next_y_ += step;
 
@@ -43,11 +45,8 @@ void Player::setDirection(Direction dir)
     direction_ = dir;
 }
 
-// low quality movement constraints using only < 0 for x and y to check bounds. REFACTOR LATER.
 void Player::confirmMove()
 {
-    if (next_x_ < 0 || next_y_ < 0)
-        return;
     x_ = next_x_;
     y_ = next_y_;
 }

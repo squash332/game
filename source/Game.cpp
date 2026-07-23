@@ -1,5 +1,6 @@
 #include "Game.hpp"
 
+
 Game::Game()
 {
     game_window_ = std::make_unique<Window>();
@@ -8,6 +9,7 @@ Game::Game()
     renderer_ = std::make_unique<Renderer>();
     map_ = std::make_unique<Map>("res/testmap.json");
     cam_ = std::make_unique<Cam2d>();
+    enemy_knight_ = std::make_unique<Enemy>("knight");
 
     input_->bindPressed(KEY_F10, [this]
                  { game_window_->toggleFullscreen(); });
@@ -50,12 +52,14 @@ void Game::run()
         cam_->beginFrame();
 
         renderer_->drawMap(*map_);
+        DrawCircleV({floorf(player_->getX() + player_->getWidth()/2), floorf(player_->getY() + player_->getHeight() - TILE_SIZE/4)}, TILE_SIZE/2, Fade(RED, 0.3f));
+        renderer_->drawEnemy(*enemy_knight_);
         renderer_->drawPlayer(*player_);
-        std::cout << player_->getX() << "," << player_->getY() << std::endl;
+        // std::cout << player_->getX() << "," << player_->getY() << std::endl;
         // std::cout << "cols: " << map_->getCols() << " rows: " << map_->getRows() <<std::endl;
-        displayLogs(*map_);
         cam_->endFrame();
-        DrawFPS(0, 0);
+        
+        displayLogs();
         game_window_->endFrame();
     }
 }
@@ -65,17 +69,19 @@ void Game::toggleDebugMode()
     debug_mode = !debug_mode;
 }
 
-void Game::displayLogs(const Map &m)
+void Game::displayLogs()
 {
     if (!debug_mode)
         return;
+    
+    // display fps    
+    DrawFPS(0, 0);
 
-    for (auto y{0}; y <= m.getRows(); y++)
-    {
-        for (auto x{0}; x <= m.getCols(); x++)
-        {
-            DrawLine(x * TILE_SIZE, y * TILE_SIZE, x * TILE_SIZE, VIRTUAL_HEIGHT, RED);
-            DrawLine(x * TILE_SIZE, y * TILE_SIZE, VIRTUAL_WIDTH, y * TILE_SIZE, RED);
-        }
-    }
+    // display player coordinates
+    DrawText("x position: ", 0, 20, 15, RED);
+    DrawText("y position: ", 0, 40, 15, RED);
+    DrawText(std::to_string((int)player_->getX()).c_str(), 80, 20, 15, RED);
+    DrawText(std::to_string((int)player_->getY()).c_str(), 80, 40, 15, RED);
+
+    // display player circle hitbox
 }

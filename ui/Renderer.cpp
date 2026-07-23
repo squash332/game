@@ -4,12 +4,14 @@
 Renderer::Renderer()
 {
     player_sprite_ = LoadTexture("res/fire-dragon.png");
-    frame_width_ = player_sprite_.width/NR_OF_FRAMES_IN_TEXTURE;
+    enemy_knight_ = LoadTexture("res/enemy_knight.png");
+    frame_width_ = player_sprite_.width / NR_OF_FRAMES_IN_TEXTURE;
 }
 
 Renderer::~Renderer()
 {
     UnloadTexture(player_sprite_);
+    UnloadTexture(enemy_knight_);
 }
 
 void Renderer::drawPlayer(const Player &player)
@@ -37,4 +39,10 @@ void Renderer::drawMap(const Map &m)
             DrawTextureRec(tile.texture, tile.rectangle, position, WHITE);
         }
     }
+}
+
+void Renderer::drawEnemy(const Enemy &enemy)
+{
+    DrawTextureRec(enemy_knight_,
+                   Rectangle{0, 0, enemy_knight_.width / NR_OF_FRAMES_IN_TEXTURE, enemy_knight_.height}, {floorf(enemy.getX()), floorf(enemy.getY())}, RAYWHITE);
 }
