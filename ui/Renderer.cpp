@@ -38,8 +38,3 @@ void Renderer::drawMap(const Map &m)
         }
     }
 }
-
-void Renderer::displayLogs()
-{
-    DrawFPS(0, 0);
-}

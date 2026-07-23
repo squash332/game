@@ -30,6 +30,9 @@ Map::Map(const char *filepath)
 
     cute_tiled_tileset_t *tileset = map_->tilesets;
 
+    width_ = map_->width;
+    height_ = map_->height;
+
     while (tileset)
     {
         LoadedTileset lt;

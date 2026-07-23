@@ -13,7 +13,7 @@ public:
 
     void drawPlayer(const Player &other);
     void drawMap(const Map &other);
-    void displayLogs();
+
     
 protected:
 private:

@@ -19,22 +19,25 @@ Game::Game()
                  { player_->addDirection(Direction::Down); });
     input_->bind(KEY_D, [this]
                  { player_->addDirection(Direction::Right); });
+    input_->bind(KEY_T, [this]
+                 { toggleDebugMode(); });
 }
 
 void Game::run()
 {
-    
+
     while (!game_window_->shouldClose())
     {
+
         delta_time = GetFrameTime();
         timer += delta_time;
-
-        if(timer >= 0.2f) {
+        if (timer >= 0.2f)
+        {
             timer = 0.0f;
             frame++;
         }
         frame = frame % 2;
-        std::cout << frame << std::endl;
+        // std::cout << frame << std::endl;
 
         input_->update();
         player_->update(delta_time, frame);
@@ -43,15 +46,36 @@ void Game::run()
 
         game_window_->beginFrame();
         ClearBackground(BLACK);
-        
+
         cam_->beginFrame();
-        
+
         renderer_->drawMap(*map_);
         renderer_->drawPlayer(*player_);
-        // std::cout << player_->getX() << "," << player_->getY() << std::endl;
+        std::cout << player_->getX() << "," << player_->getY() << std::endl;
+        // std::cout << "cols: " << map_->getCols() << " rows: " << map_->getRows() <<std::endl;
+        displayLogs(*map_);
         cam_->endFrame();
-        renderer_->displayLogs();
+        DrawFPS(0, 0);
         game_window_->endFrame();
     }
 }
 
+void Game::toggleDebugMode()
+{
+    debug_mode = !debug_mode;
+}
+
+void Game::displayLogs(const Map &m)
+{
+    if (!debug_mode)
+        return;
+
+    for (auto y{0}; y <= m.getRows(); y++)
+    {
+        for (auto x{0}; x <= m.getCols(); x++)
+        {
+            DrawLine(x * TILE_SIZE, y * TILE_SIZE, x * TILE_SIZE, VIRTUAL_HEIGHT, RED);
+            DrawLine(x * TILE_SIZE, y * TILE_SIZE, VIRTUAL_WIDTH, y * TILE_SIZE, RED);
+        }
+    }
+}

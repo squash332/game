@@ -30,6 +30,10 @@ public:
   ~Game() = default;
   void run();
 
+  void toggleDebugMode();
+  void displayLogs(const Map& m);
+  bool debug_mode = false;
+
 private:
   Texture2D sprite;
 
