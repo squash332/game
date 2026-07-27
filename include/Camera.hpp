@@ -17,6 +17,8 @@ public:
     void handleZoom();
     void resetZoom();
 
+    Camera2D getCamera() const;
+
 protected:
 private:
     Camera2D camera_;

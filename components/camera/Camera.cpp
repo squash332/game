@@ -47,5 +47,10 @@ void Cam2d::resetZoom()
     // TODO
 }
 
+Camera2D Cam2d::getCamera() const
+{
+    return camera_;
+}
+
 // TODO
 // make camera offset the target when approaching the map's end and not show parts which are not parts of map.

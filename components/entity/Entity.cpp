@@ -1,10 +1,13 @@
 #include "Entity.hpp"
 
-Entity::Entity(float x, float y)
+Entity::Entity(float x, float y, bool isAlly)
     : x_(x),
       y_(y),
       current_health_(100),
-      max_health_(100)
+      max_health_(100),
+      is_ally_(isAlly),
+      width_(CHARACTER_WIDTH),
+      height_(CHARACTER_HEIGHT)
 {
     direction_ = Direction::None;
     std::cout << "entity constructor ran" << std::endl;
@@ -45,3 +48,14 @@ float Entity::getMaxHealth() const
 {
     return max_health_;
 }
+
+float Entity::getWidth() const
+{
+    return width_;
+}
+
+float Entity::getHeight() const
+{
+    return height_;
+}
+
