@@ -8,6 +8,8 @@ Game::Game()
       map_("res/testmap.json"),
       cam_(),
       hud_()
+          cam_(),
+      hud_()
 {
     enemies_.push_back(std::make_unique<Enemy>("knight"));
 
@@ -23,7 +25,6 @@ Game::Game()
                     { player_.addDirection(Direction::Right); });
     input_.bindPressed(KEY_T, [this]
                        { toggleDebugMode(); });
-    
 }
 
 void Game::run()
@@ -44,17 +45,22 @@ void Game::run()
         player_.update(delta_time, frame);
         player_.confirmMove();
         cam_.update(player_.getX(), player_.getY(), delta_time);
-        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            handleTargetClick();
+        }
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
             handleTargetClick();
         }
 
         game_window_.beginFrame();
         ClearBackground(BLACK);
         cam_.beginFrame();
-        
+
         renderer_.drawMap(map_);
         renderer_.drawNameplate(player_);
-        
+
         for (auto &enemy : enemies_)
         {
             bool targeted = (current_target == enemy.get());
@@ -65,10 +71,15 @@ void Game::run()
         // std::cout << player_.getX() << "," << player_.getY() << std::endl;
         // std::cout << "cols: " << map_.getCols() << " rows: " << map_.getRows() <<std::endl;
         cam_.endFrame();
-        
+
         hud_.drawPlayerFrame(player_);
-        if (current_target != nullptr) hud_.drawTargetedFrame(*current_target);
-        
+        if (current_target != nullptr)
+            hud_.drawTargetedFrame(*current_target);
+
+        hud_.drawPlayerFrame(player_);
+        if (current_target != nullptr)
+            hud_.drawTargetedFrame(*current_target);
+
         displayLogs();
         game_window_.endFrame();
     }
@@ -104,13 +115,15 @@ void Game::handleTargetClick()
     // or maybe hide mouse while holding right click just like in wow or maybe untarget just with ESCAPE
     current_target = nullptr;
 
-    // compute mouse position in our game in relation to camera 
+    // compute mouse position in our game in relation to camera
     Vector2 mouseScreen = GetMousePosition();
     Vector2 mouseWorld = GetScreenToWorld2D(mouseScreen, cam_.getCamera());
 
-    for (auto &enemy : enemies_) {
+    for (auto &enemy : enemies_)
+    {
         Rectangle bounds = {enemy->getX(), enemy->getY(), enemy->getWidth(), enemy->getHeight()};
-        if (CheckCollisionPointRec(mouseWorld, bounds)) {
+        if (CheckCollisionPointRec(mouseWorld, bounds))
+        {
             current_target = enemy.get();
             break;
         }
@@ -118,9 +131,9 @@ void Game::handleTargetClick()
 
     Rectangle player = {player_.getX(), player_.getY(), player_.getWidth(), player_.getHeight()};
 
-    if (CheckCollisionPointRec(mouseWorld, player)) {
+    if (CheckCollisionPointRec(mouseWorld, player))
+    {
         current_target = &player_;
         return;
     }
-
 }
