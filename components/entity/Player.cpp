@@ -4,7 +4,7 @@
 #include <math.h>
 
 Player::Player(std::string name)
-    : Entity(50.0f, 100.0f),
+    : Entity(50.0f, 100.0f, true),
       name_(name),
       width_(static_cast<float>(CHARACTER_WIDTH)),
       height_(static_cast<float>(CHARACTER_HEIGHT))
@@ -14,6 +14,7 @@ Player::Player(std::string name)
 
 void Player::update(float delta, int frame)
 {
+    // need to adjust which frame to draw based on state: idle or moving or attacking
     frame_number_ = frame;
     next_x_ = x_;
     next_y_ = y_;

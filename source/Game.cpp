@@ -6,7 +6,8 @@ Game::Game()
       input_(),
       renderer_(),
       map_("res/testmap.json"),
-      cam_()
+      cam_(),
+      hud_()
 {
     enemies_.push_back(std::make_unique<Enemy>("knight"));
 
@@ -22,12 +23,11 @@ Game::Game()
                     { player_.addDirection(Direction::Right); });
     input_.bindPressed(KEY_T, [this]
                        { toggleDebugMode(); });
+    
 }
 
 void Game::run()
 {
-    Enemy *current_target = nullptr;
-    Enemy *focus_target = nullptr;
     while (!game_window_.shouldClose())
     {
         delta_time = GetFrameTime();
@@ -44,15 +44,17 @@ void Game::run()
         player_.update(delta_time, frame);
         player_.confirmMove();
         cam_.update(player_.getX(), player_.getY(), delta_time);
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            handleTargetClick();
+        }
 
         game_window_.beginFrame();
         ClearBackground(BLACK);
-
         cam_.beginFrame();
-
+        
         renderer_.drawMap(map_);
         renderer_.drawNameplate(player_);
-
+        
         for (auto &enemy : enemies_)
         {
             bool targeted = (current_target == enemy.get());
@@ -63,7 +65,10 @@ void Game::run()
         // std::cout << player_.getX() << "," << player_.getY() << std::endl;
         // std::cout << "cols: " << map_.getCols() << " rows: " << map_.getRows() <<std::endl;
         cam_.endFrame();
-
+        
+        hud_.drawPlayerFrame(player_);
+        if (current_target != nullptr) hud_.drawTargetedFrame(*current_target);
+        
         displayLogs();
         game_window_.endFrame();
     }
@@ -89,4 +94,33 @@ void Game::displayLogs()
     DrawText(std::to_string((int)player_.getY()).c_str(), 80, 40, 15, RED);
 
     // display player circle hitbox
+}
+
+void Game::handleTargetClick()
+{
+    // select nothing is default
+    // TODO :: later when combat implemented, it will feel bad and clunky
+    // turn off not targeting anything when in combat
+    // or maybe hide mouse while holding right click just like in wow or maybe untarget just with ESCAPE
+    current_target = nullptr;
+
+    // compute mouse position in our game in relation to camera 
+    Vector2 mouseScreen = GetMousePosition();
+    Vector2 mouseWorld = GetScreenToWorld2D(mouseScreen, cam_.getCamera());
+
+    for (auto &enemy : enemies_) {
+        Rectangle bounds = {enemy->getX(), enemy->getY(), enemy->getWidth(), enemy->getHeight()};
+        if (CheckCollisionPointRec(mouseWorld, bounds)) {
+            current_target = enemy.get();
+            break;
+        }
+    }
+
+    Rectangle player = {player_.getX(), player_.getY(), player_.getWidth(), player_.getHeight()};
+
+    if (CheckCollisionPointRec(mouseWorld, player)) {
+        current_target = &player_;
+        return;
+    }
+
 }

@@ -13,6 +13,7 @@
 #include "Map.hpp"
 #include "Camera.hpp"
 #include "Enemy.hpp"
+#include "HUD.hpp"
 
 enum class GameState
 {
@@ -34,15 +35,19 @@ public:
   void toggleDebugMode();
   void displayLogs();
   bool debug_mode = false;
+  void handleTargetClick();
+
+  Entity *current_target = nullptr;
+  Entity *focus_target = nullptr;
 
 private:
-
   Window game_window_;
   InputManager input_;
   Player player_;
   Map map_;
   Renderer renderer_;
   Cam2d cam_;
+  HUD hud_;
 
   std::vector<std::unique_ptr<Enemy>> enemies_;
 

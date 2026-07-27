@@ -3,11 +3,12 @@
 #include "Common.hpp"
 #include "Direction.hpp"
 #include "raylib.h"
+#include "Constants.hpp"
 
 class Entity
 {
 public:
-  Entity(float, float);
+  Entity(float x, float y, bool isAlly);
   Entity(const Entity &other) = delete;
   virtual ~Entity() = default;
 
@@ -18,7 +19,10 @@ public:
   float getNextY() const;
   float getCurrentHealth() const;
   float getMaxHealth() const;
+  float getWidth() const;
+  float getHeight() const;
 
+  bool is_ally_;
 protected:
   float max_health_;
   float current_health_;
@@ -26,4 +30,5 @@ protected:
   float x_, y_;
   float next_x_, next_y_;
   Direction direction_;
+  float width_, height_;
 };

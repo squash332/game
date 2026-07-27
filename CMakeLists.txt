@@ -29,7 +29,9 @@ add_executable(game_exe
     components/camera/Camera.cpp
     
     ui/Renderer.cpp
-    ui/Window.cpp)
+    ui/Window.cpp
+    ui/HUD.cpp
+)
 
 target_include_directories(game_exe PRIVATE include ui/include)
 target_compile_features(game_exe PRIVATE cxx_std_17)
