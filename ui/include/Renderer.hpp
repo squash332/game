@@ -4,6 +4,7 @@
 #include "Player.hpp"
 #include "Map.hpp"
 #include "Enemy.hpp"
+#include "Animation.hpp"
 
 class Renderer
 {
@@ -21,5 +22,4 @@ protected:
 private:
     Texture2D player_sprite_;
     Texture2D enemy_knight_;
-    float frame_width_;
 };

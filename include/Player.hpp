@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entity.hpp"
+#include "Animation.hpp"
 
 class Player : public Entity
 {
@@ -14,6 +15,7 @@ public:
 
     float getWidth() const { return width_; }
     float getHeight() const { return height_; }
+    AnimationState getAnimState() const { return anim_state_; }
 
     void attack();
 
@@ -23,4 +25,6 @@ private:
     std::string name_;
     float width_;
     float height_;
+    AnimationState anim_state_;
+    Direction last_direction_ = Direction::None;
 };

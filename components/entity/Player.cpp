@@ -1,13 +1,13 @@
 #include "Player.hpp"
 #include "Constants.hpp"
-#include "Entity.hpp"
 #include <math.h>
 
 Player::Player(std::string name)
     : Entity(50.0f, 100.0f, true),
       name_(name),
       width_(static_cast<float>(CHARACTER_WIDTH)),
-      height_(static_cast<float>(CHARACTER_HEIGHT))
+      height_(static_cast<float>(CHARACTER_HEIGHT)),
+      anim_state_(AnimationState::IdleDown)
 {
     std::cout << "player constructor ran" << std::endl;
 }
@@ -26,24 +26,68 @@ void Player::update(float delta, int frame)
     float DIAGONAL_INDEX = MOVEMENT_INDEX / sqrt(2.0f);
     float step = ((is_moving_vertical && is_moving_horizontal) ? DIAGONAL_INDEX : MOVEMENT_INDEX) * delta;
 
+    bool moved = false;
+
     if (direction_ & Direction::Up)
+    {
         next_y_ -= step;
- 
+        anim_state_ = AnimationState::WalkUp;
+        last_direction_ = Direction::Up;
+        moved = true;
+    }
+
     if (direction_ & Direction::Down)
+    {
         next_y_ += step;
+        anim_state_ = AnimationState::WalkDown;
+        last_direction_ = Direction::Down;
+        moved = true;
+    }
 
     if (direction_ & Direction::Right)
+    {
         next_x_ += step;
+        anim_state_ = AnimationState::WalkRight;
+        last_direction_ = Direction::Right;
+        moved = true;
+    }
 
     if (direction_ & Direction::Left)
+    {
         next_x_ -= step;
+        anim_state_ = AnimationState::WalkLeft;
+        last_direction_ = Direction::Left;
+        moved = true;
+    }
+
+    if (!moved)
+    {
+        switch (last_direction_)
+        {
+        case Direction::Up:
+            anim_state_ = AnimationState::IdleUp;
+            break;
+        case Direction::Down:
+            anim_state_ = AnimationState::IdleDown;
+            break;
+        case Direction::Left:
+            anim_state_ = AnimationState::IdleLeft;
+            break;
+        case Direction::Right:
+            anim_state_ = AnimationState::IdleRight;
+            break;
+        default:
+            anim_state_ = AnimationState::IdleDown;
+            break;
+        }
+    }
 
     direction_ = Direction::None;
     DrawCircleV({floorf(getX() + getWidth() / 2), floorf(getY() + getHeight() - TILE_SIZE / 4)}, TILE_SIZE / 2, Fade(RED, 0.3f));
 }
 
-
-void Player::attack() {
+void Player::attack()
+{
     // ATTACK BASED ON TARGET
 }
 

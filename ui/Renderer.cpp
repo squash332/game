@@ -3,9 +3,8 @@
 
 Renderer::Renderer()
 {
-    player_sprite_ = LoadTexture("res/fire-dragon.png");
+    player_sprite_ = LoadTexture("res/Crusader.png");
     enemy_knight_ = LoadTexture("res/enemy_knight.png");
-    frame_width_ = player_sprite_.width / NR_OF_FRAMES_IN_TEXTURE;
 }
 
 Renderer::~Renderer()
@@ -16,9 +15,17 @@ Renderer::~Renderer()
 
 void Renderer::drawPlayer(const Player &player)
 {
-    DrawTextureRec(player_sprite_, Rectangle{(frame_width_ * player.frame_number_), 0, player_sprite_.width / NR_OF_FRAMES_IN_TEXTURE, player_sprite_.height},
-                   {floorf(player.getX()), floorf(player.getY())},
-                   RAYWHITE);
+    AnimationData anim = getAnimData(player.getAnimState());
+    int wrappedFrame = player.frame_number_ % anim.frameCount;
+
+    Rectangle src = {
+        (float)(wrappedFrame * 64),
+        (float)(anim.row * 64),
+        (float)64,
+        (float)64
+    };
+
+    DrawTextureRec(player_sprite_, src, { floorf(player.getX()), floorf(player.getY()) }, RAYWHITE);
 }
 
 void Renderer::drawMap(const Map &m)
@@ -38,8 +45,9 @@ void Renderer::drawMap(const Map &m)
 
 void Renderer::drawEnemy(const Enemy &enemy)
 {
+    // 9 is for now a hard coded number of frames in the knight's png 
     DrawTextureRec(enemy_knight_,
-                   Rectangle{0, 0, enemy_knight_.width / NR_OF_FRAMES_IN_TEXTURE, enemy_knight_.height}, {floorf(enemy.getX()), floorf(enemy.getY())}, RAYWHITE);
+                   Rectangle{0, 0, enemy_knight_.width / 9, enemy_knight_.height}, {floorf(enemy.getX()), floorf(enemy.getY())}, RAYWHITE);
 }
 
 void Renderer::drawNameplate(const Entity &entity, bool isTargeted)
