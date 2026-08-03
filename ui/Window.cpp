@@ -43,12 +43,19 @@ bool Window::shouldClose()
 
 void Window::toggleFullscreen()
 {
-  ToggleFullscreen();
-  if (!fullscreen_) {
-    int monitor = GetCurrentMonitor();
-    SetWindowSize(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
-  } else {
-    SetWindowSize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
-  }
-  fullscreen_ = !fullscreen_;
+    int monitor = GetCurrentMonitor(); 
+
+    if (!fullscreen_)
+    {
+        SetWindowMonitor(monitor); 
+        SetWindowSize(GetMonitorWidth(monitor), GetMonitorHeight(monitor));
+        ToggleFullscreen();
+    }
+    else
+    {
+        ToggleFullscreen();
+        SetWindowSize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+    }
+
+    fullscreen_ = !fullscreen_;
 }

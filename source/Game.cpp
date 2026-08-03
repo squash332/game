@@ -47,10 +47,6 @@ void Game::run()
         {
             handleTargetClick();
         }
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        {
-            handleTargetClick();
-        }
 
         game_window_.beginFrame();
         ClearBackground(BLACK);
