@@ -20,6 +20,8 @@ add_executable(game_exe
     source/main.cpp
     source/Game.cpp
     
+    collision/Collision.cpp
+
     components/input/InputManager.cpp
     components/entity/Entity.cpp
     components/entity/Player.cpp

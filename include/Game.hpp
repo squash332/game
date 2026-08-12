@@ -14,6 +14,7 @@
 #include "Camera.hpp"
 #include "Enemy.hpp"
 #include "HUD.hpp"
+#include "Collision.hpp"
 
 enum class GameState
 {

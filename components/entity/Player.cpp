@@ -3,7 +3,7 @@
 #include <math.h>
 
 Player::Player(std::string name)
-    : Entity(50.0f, 100.0f, true),
+    : Entity(50.0f, 150.0f, true),
       name_(name),
       width_(static_cast<float>(CHARACTER_WIDTH)),
       height_(static_cast<float>(CHARACTER_HEIGHT)),
@@ -84,6 +84,11 @@ void Player::update(float delta, int frame)
 
     direction_ = Direction::None;
     DrawCircleV({floorf(getX() + getWidth() / 2), floorf(getY() + getHeight() - TILE_SIZE / 4)}, TILE_SIZE / 2, Fade(RED, 0.3f));
+}
+
+Rectangle Player::getPlayerRect() const
+{
+    return Rectangle{next_x_, next_y_, width_, height_};
 }
 
 void Player::attack()

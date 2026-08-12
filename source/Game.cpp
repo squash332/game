@@ -41,7 +41,9 @@ void Game::run()
 
         input_.update();
         player_.update(delta_time, frame);
-        player_.confirmMove();
+        if (collision::isTileWalkable(player_.getPlayerRect(), map_)) {
+            player_.confirmMove();
+        }
         cam_.update(player_.getX(), player_.getY(), delta_time);
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
@@ -62,6 +64,10 @@ void Game::run()
             renderer_.drawEnemy(*enemy);
         }
         renderer_.drawPlayer(player_);
+
+        // draw player rectangle hitbox
+        if (debug_mode)
+            DrawRectangleLines(player_.getX(), player_.getY(), player_.getWidth(), player_.getHeight(), GREEN);
         // std::cout << player_.getX() << "," << player_.getY() << std::endl;
         // std::cout << "cols: " << map_.getCols() << " rows: " << map_.getRows() <<std::endl;
         cam_.endFrame();
@@ -90,15 +96,21 @@ void Game::displayLogs()
         return;
 
     // display fps
-    DrawFPS(0, 0);
+    // DrawFPS(0, 0);
+
+    // tile pos under player pos :
+    int playerTileX = (int)floorf(player_.getX() / TILE_SIZE);
+    int playerTileY = (int)floorf(player_.getY() / TILE_SIZE);
 
     // display player coordinates
-    DrawText("x position: ", 0, 20, 15, RED);
-    DrawText("y position: ", 0, 40, 15, RED);
-    DrawText(std::to_string((int)player_.getX()).c_str(), 80, 20, 15, RED);
-    DrawText(std::to_string((int)player_.getY()).c_str(), 80, 40, 15, RED);
+    DrawText("x position: ", 0, VIRTUAL_HEIGHT - 20, 15, RED);
+    DrawText("y position: ", 0, VIRTUAL_HEIGHT - 40, 15, RED);
+    DrawText("tile position: ", 0, VIRTUAL_HEIGHT - 60, 15, RED);
+    DrawText(std::to_string((int)player_.getX()).c_str(), 80, VIRTUAL_HEIGHT - 20, 15, RED);
+    DrawText(std::to_string((int)player_.getY()).c_str(), 80, VIRTUAL_HEIGHT - 40, 15, RED);
 
-    // display player circle hitbox
+    DrawText(std::to_string(playerTileX).c_str(), 90, VIRTUAL_HEIGHT - 60, 15, RED);
+    DrawText(std::to_string(playerTileY).c_str(), 110, VIRTUAL_HEIGHT - 60, 15, RED);
 }
 
 void Game::handleTargetClick()

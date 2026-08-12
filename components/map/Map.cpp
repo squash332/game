@@ -58,10 +58,20 @@ Map::Map(const char *filepath)
     while (layer)
     {
         cute_tiled_chunk_t *chunk = layer->chunks;
+        TileLayer layer_temp;
+
+        for (int i = 0; i < layer->property_count; i++)
+        {
+            if (strcmp(layer->properties[i].name.ptr, "walkable") == 0)
+            {
+                layer_temp.walkable = layer->properties[i].data.boolean;
+                break;
+            }
+        }
+
         while (chunk)
         {
 
-            TileLayer layer_temp;
             // checks if current layer is of type tilelayer
             if (strcmp(layer->type.ptr, "tilelayer") == 0)
             {
@@ -105,19 +115,28 @@ Map::Map(const char *filepath)
     std::cout << "MAP: INSTANTIATED" << std::endl;
 }
 
-/**
- * Ideally each tile layer has a property which will determine if certain tiles
- * from that layer are walkable or not.
- */
-bool Map::isWalkable()
-{
-    return false;
-}
-
 Map::~Map()
 {
     cute_tiled_free_map(map_);
     std::cout << "map freed" << std::endl;
+}
+
+bool Map::isWalkable(int x, int y) const
+{
+    for (const TileLayer &layer : tile_layer_)
+    {
+        if (!layer.walkable)
+        {
+            for (const Tile &tile : layer.tiles)
+            {
+                if (tile.x == x && tile.y == y && tile.id != 0) {
+                    std::cout << "BLOCKED by layer: " << layer.name << " (id=" << tile.id << ") at (" << x << "," << y << ")" << std::endl;
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
 }
 
 uint32_t Map::getCols() const

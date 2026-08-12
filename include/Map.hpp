@@ -21,6 +21,7 @@ struct TileLayer
     uint32_t width;
     uint32_t height;
     std::vector<Tile> tiles;
+    bool walkable = true;
 };
 
 struct Object
@@ -43,7 +44,7 @@ public:
     Map(const Map &other) = delete;
     ~Map();
 
-    bool isWalkable();
+    bool isWalkable(int x, int y) const;
 
     uint32_t getCols() const;
     uint32_t getRows() const;

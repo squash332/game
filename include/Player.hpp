@@ -15,6 +15,7 @@ public:
 
     float getWidth() const { return width_; }
     float getHeight() const { return height_; }
+    Rectangle getPlayerRect() const;
     AnimationState getAnimState() const { return anim_state_; }
 
     void attack();

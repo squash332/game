@@ -16,5 +16,5 @@ constexpr int NR_OF_FRAMES_MOVING  = 9;
 #define MOVEMENT_INDEX 120
 
 // CHARACTER SPRITE RELATED
-constexpr int CHARACTER_WIDTH = 64;
-constexpr int CHARACTER_HEIGHT = 64;
+constexpr int CHARACTER_WIDTH = 16;
+constexpr int CHARACTER_HEIGHT = 32;
