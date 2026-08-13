@@ -36,7 +36,6 @@ void Game::run()
             timer = 0.0f;
             frame++;
         }
-        frame = frame % 2;
         // std::cout << frame << std::endl;
 
         input_.update();
