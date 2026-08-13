@@ -3,13 +3,13 @@
 #include <math.h>
 
 Player::Player(std::string name)
-    : Entity(50.0f, 150.0f, true),
+    : Entity(50.0f, 150.0f, true, SPRITE_WIDTH, SPRITE_HEIGHT, HITBOX_WIDTH, HITBOX_HEIGHT),
       name_(name),
-      width_(static_cast<float>(HITBOX_WIDTH)),
-      height_(static_cast<float>(HITBOX_HEIGHT)),
       anim_state_(AnimationState::IdleDown)
 {
     std::cout << "player constructor ran" << std::endl;
+    std::cout << "player width: " << hitbox_width_<< std::endl;
+    std::cout << "player height: " << hitbox_height_<< std::endl;
 }
 
 void Player::update(float delta, int frame)
@@ -83,13 +83,6 @@ void Player::update(float delta, int frame)
     }
 
     direction_ = Direction::None;
-}
-
-Rectangle Player::getHitboxAt(float posX, float posY) const
-{
-    float offsetX = SPRITE_WIDTH / 2 - HITBOX_WIDTH / 2;
-    float offsetY = SPRITE_HEIGHT - HITBOX_HEIGHT;
-    return Rectangle{posX + offsetX, posY + offsetY, width_, height_};
 }
 
 void Player::attack()

@@ -19,10 +19,10 @@ void Renderer::drawPlayer(const Player &player)
     int wrappedFrame = player.frame_number_ % anim.frameCount;
 
     Rectangle src = {
-        (float)(wrappedFrame * SPRITE_WIDTH),
-        (float)(anim.row * SPRITE_HEIGHT),
-        (float)SPRITE_WIDTH,
-        (float)SPRITE_HEIGHT
+        wrappedFrame * player.getSpriteWidth(),
+        anim.row * player.getSpriteHeight(),
+        player.getSpriteWidth(),
+        player.getSpriteHeight()
     };
 
     DrawTextureRec(player_sprite_, src, { floorf(player.getX()), floorf(player.getY()) }, RAYWHITE);
@@ -52,13 +52,14 @@ void Renderer::drawEnemy(const Enemy &enemy)
 
 void Renderer::drawNameplate(const Entity &entity, bool isTargeted)
 {
-    float barWidth = TILE_SIZE;
-    float barHeight = 3.0f;
-    Vector2 barPos = {floorf(entity.getX()), floorf(entity.getY() + 3.0f)};
+    float barWidth = TILE_SIZE + TILE_SIZE / 2;
+    float barHeight = SPRITE_HEIGHT % 10;
+    float ratio = (float)entity.getCurrentHealth() / (float)entity.getMaxHealth();
+
+    Vector2 barPos = {floorf(entity.getX()) + entity.getSpriteWidth()/2 - barWidth/2, floorf(entity.getY())};
 
     DrawRectangleV(barPos, {barWidth, barHeight}, DARKGRAY);
 
-    float ratio = (float)entity.getCurrentHealth() / (float)entity.getMaxHealth();
     DrawRectangleV(barPos, {barWidth * ratio, barHeight}, RED);
 
     if (isTargeted)

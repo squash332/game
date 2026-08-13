@@ -13,9 +13,6 @@ public:
     void confirmMove(bool canX, bool canY);
     void addDirection(Direction dir);
 
-    float getWidth() const { return width_; }
-    float getHeight() const { return height_; }
-    Rectangle getHitboxAt(float posX, float posY) const;
     AnimationState getAnimState() const { return anim_state_; }
 
     void attack();
@@ -24,8 +21,6 @@ public:
 
 private:
     std::string name_;
-    float width_;
-    float height_;
     AnimationState anim_state_;
     Direction last_direction_ = Direction::None;
 };

@@ -60,16 +60,19 @@ void Game::run()
             bool targeted = (current_target == enemy.get());
             renderer_.drawNameplate(*enemy, targeted);
             renderer_.drawEnemy(*enemy);
-            if (debug_mode)
-                DrawRectangleLines(enemy->getX(), enemy->getY(), enemy->getWidth(), enemy->getHeight(), GREEN);
+            if (debug_mode) {
+                DrawRectangleLines(enemy->getX(), enemy->getY(), enemy->getSpriteWidth(), enemy->getSpriteHeight(), RED);
+                Rectangle e_hitbox = enemy->getHitboxAt(enemy->getX(), enemy->getY());
+                DrawRectangleLines(e_hitbox.x, e_hitbox.y, e_hitbox.width, e_hitbox.height, GREEN);
+            }
         }
         renderer_.drawPlayer(player_);
 
         // green - collision box
-        // red - spritesheet draw box
+        // red - spritesheet draw box (nameplate size or?)
         if (debug_mode)
         {
-            DrawRectangleLines(player_.getX(), player_.getY(), SPRITE_WIDTH, SPRITE_HEIGHT, RED);
+            DrawRectangleLines(player_.getX(), player_.getY(), player_.getSpriteWidth(), player_.getSpriteHeight(), RED);
             Rectangle hitbox = player_.getHitboxAt(player_.getX(), player_.getY());
             DrawRectangleLines(hitbox.x, hitbox.y, hitbox.width, hitbox.height, GREEN);
         }
@@ -127,12 +130,12 @@ void Game::handleTargetClick()
     current_target = nullptr;
 
     // compute mouse position in our game in relation to camera
-    Vector2 mouseScreen = GetMousePosition();
+    Vector2 mouseScreen = getVirtualMousePos();
     Vector2 mouseWorld = GetScreenToWorld2D(mouseScreen, cam_.getCamera());
 
     for (auto &enemy : enemies_)
     {
-        Rectangle bounds = {enemy->getX(), enemy->getY(), enemy->getWidth(), enemy->getHeight()};
+        Rectangle bounds = {enemy->getX(), enemy->getY(), enemy->getSpriteWidth(), enemy->getSpriteHeight()};
         if (CheckCollisionPointRec(mouseWorld, bounds))
         {
             current_target = enemy.get();
@@ -140,7 +143,7 @@ void Game::handleTargetClick()
         }
     }
 
-    Rectangle player = {player_.getX(), player_.getY(), player_.getWidth(), player_.getHeight()};
+    Rectangle player = {player_.getX(), player_.getY(), player_.getSpriteWidth(), player_.getSpriteHeight()};
 
     if (CheckCollisionPointRec(mouseWorld, player))
     {
@@ -158,4 +161,12 @@ void Game::tryMove()
     bool canY = collision::isTileWalkable(MovementY, map_);
 
     player_.confirmMove(canX, canY);
+}
+
+Vector2 Game::getVirtualMousePos()
+{
+    Vector2 mouse = GetMousePosition();
+    float scaleX = (float)VIRTUAL_WIDTH / GetScreenWidth();
+    float scaleY = (float)VIRTUAL_HEIGHT / GetScreenHeight();
+    return {mouse.x * scaleX, mouse.y * scaleY};
 }

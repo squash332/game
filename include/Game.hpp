@@ -38,6 +38,7 @@ public:
   bool debug_mode = false;
   void handleTargetClick();
   void tryMove();
+  Vector2 getVirtualMousePos();
 
   Entity *current_target = nullptr;
   Entity *focus_target = nullptr;

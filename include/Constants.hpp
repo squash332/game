@@ -3,8 +3,8 @@
 #include <iostream>
 
 // WINDOW
-constexpr int VIRTUAL_WIDTH = 1280;
-constexpr int VIRTUAL_HEIGHT = 720;
+constexpr int VIRTUAL_WIDTH = 480;
+constexpr int VIRTUAL_HEIGHT = 270;
 constexpr int TILE_SIZE = 16;
 
 // ANIMATION
@@ -25,3 +25,8 @@ constexpr float HITBOX_HEIGHT_RATIO = 0.25f;  // hitbox is 1/2 sprite's height
 // COLLISION (movement hitbox — small, near the feet) GREEN
 constexpr int HITBOX_WIDTH = (int)(SPRITE_WIDTH * HITBOX_WIDTH_RATIO); 
 constexpr int HITBOX_HEIGHT = (int)(SPRITE_HEIGHT * HITBOX_HEIGHT_RATIO); 
+
+
+// ENEMY sprite
+constexpr int ENEMY_SPRITE_WIDTH = 16;
+constexpr int ENEMY_SPRITE_HEIGHT = 32;
