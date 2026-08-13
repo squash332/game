@@ -41,10 +41,8 @@ void Game::run()
 
         input_.update();
         player_.update(delta_time, frame);
-        if (collision::isTileWalkable(player_.getPlayerHitbox(), map_))
-        {
-            player_.confirmMove();
-        }
+        tryMove();
+
         cam_.update(player_.getX(), player_.getY(), delta_time);
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
@@ -73,7 +71,7 @@ void Game::run()
         if (debug_mode)
         {
             DrawRectangleLines(player_.getX(), player_.getY(), SPRITE_WIDTH, SPRITE_HEIGHT, RED);
-            Rectangle hitbox = player_.getPlayerHitbox();
+            Rectangle hitbox = player_.getHitboxAt(player_.getX(), player_.getY());
             DrawRectangleLines(hitbox.x, hitbox.y, hitbox.width, hitbox.height, GREEN);
         }
         // std::cout << player_.getX() << "," << player_.getY() << std::endl;
@@ -150,4 +148,15 @@ void Game::handleTargetClick()
         current_target = &player_;
         return;
     }
+}
+
+void Game::tryMove()
+{
+    Rectangle MovementX = player_.getHitboxAt(player_.getNextX(), player_.getY());
+    bool canX = collision::isTileWalkable(MovementX, map_);
+
+    Rectangle MovementY = player_.getHitboxAt(player_.getX(), player_.getNextY());
+    bool canY = collision::isTileWalkable(MovementY, map_);
+
+    player_.confirmMove(canX, canY);
 }

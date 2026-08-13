@@ -10,12 +10,12 @@ public:
 
     void update(float delta, int frame);
     void setDirection(Direction dir);
-    void confirmMove();
+    void confirmMove(bool canX, bool canY);
     void addDirection(Direction dir);
 
     float getWidth() const { return width_; }
     float getHeight() const { return height_; }
-    Rectangle getPlayerHitbox() const;
+    Rectangle getHitboxAt(float posX, float posY) const;
     AnimationState getAnimState() const { return anim_state_; }
 
     void attack();

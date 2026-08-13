@@ -85,11 +85,11 @@ void Player::update(float delta, int frame)
     direction_ = Direction::None;
 }
 
-Rectangle Player::getPlayerHitbox() const
+Rectangle Player::getHitboxAt(float posX, float posY) const
 {
-    float offsetX = SPRITE_WIDTH / 2 - HITBOX_WIDTH / 2; 
+    float offsetX = SPRITE_WIDTH / 2 - HITBOX_WIDTH / 2;
     float offsetY = SPRITE_HEIGHT - HITBOX_HEIGHT;
-    return Rectangle{next_x_ + offsetX, next_y_ + offsetY, width_, height_};
+    return Rectangle{posX + offsetX, posY + offsetY, width_, height_};
 }
 
 void Player::attack()
@@ -102,10 +102,12 @@ void Player::setDirection(Direction dir)
     direction_ = dir;
 }
 
-void Player::confirmMove()
+void Player::confirmMove(bool allowedX, bool allowedY)
 {
-    x_ = next_x_;
-    y_ = next_y_;
+    if (allowedX)
+        x_ = next_x_;
+    if (allowedY)
+        y_ = next_y_;
 }
 
 void Player::addDirection(Direction dir)
