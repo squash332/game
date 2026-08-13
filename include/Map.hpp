@@ -10,7 +10,7 @@
 struct Tile
 {
     int id;
-    float x,y;
+    int x,y;
     Rectangle rectangle;
     Texture2D texture;
 };

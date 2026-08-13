@@ -53,6 +53,7 @@ private:
 
   std::vector<std::unique_ptr<Enemy>> enemies_;
 
-  float timer, delta_time = 0.0f;
+  float timer = 0.0f;
+  float delta_time = 0.0f;
   int frame = 0;
 };

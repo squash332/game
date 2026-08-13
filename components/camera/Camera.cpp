@@ -36,10 +36,15 @@ void Cam2d::endFrame()
 // Handles zooming out and zooming in.
 void Cam2d::handleZoom()
 {
-    if (camera_.zoom < 0.5f)
-        camera_.zoom = 0.5f;
+    float wheel = GetMouseWheelMove();
+    if (wheel != 0)
+    {
+        camera_.zoom += wheel;
+        camera_.zoom = roundf(camera_.zoom);
+    }
 
-    camera_.zoom = expf(logf(camera_.zoom) + ((float)GetMouseWheelMove() * 0.1f));
+    if (camera_.zoom < 1.0f) camera_.zoom = 1.0f;
+    if (camera_.zoom > 4.0f) camera_.zoom = 4.0f;
 }
 
 void Cam2d::resetZoom()
