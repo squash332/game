@@ -9,7 +9,7 @@ class Entity
 {
 public:
   Entity(float x, float y, bool isAlly);
-  Entity(const Entity &other) = delete;
+  Entity(const Entity &other) = default;
   virtual ~Entity() = default;
 
   void setPosition(float, float);

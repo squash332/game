@@ -19,10 +19,10 @@ void Renderer::drawPlayer(const Player &player)
     int wrappedFrame = player.frame_number_ % anim.frameCount;
 
     Rectangle src = {
-        (float)(wrappedFrame * 64),
-        (float)(anim.row * 64),
-        (float)64,
-        (float)64
+        (float)(wrappedFrame * SPRITE_WIDTH),
+        (float)(anim.row * SPRITE_HEIGHT),
+        (float)SPRITE_WIDTH,
+        (float)SPRITE_HEIGHT
     };
 
     DrawTextureRec(player_sprite_, src, { floorf(player.getX()), floorf(player.getY()) }, RAYWHITE);

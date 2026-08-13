@@ -5,9 +5,7 @@ Entity::Entity(float x, float y, bool isAlly)
       y_(y),
       current_health_(100),
       max_health_(100),
-      is_ally_(isAlly),
-      width_(CHARACTER_WIDTH),
-      height_(CHARACTER_HEIGHT)
+      is_ally_(isAlly)
 {
     direction_ = Direction::None;
     std::cout << "entity constructor ran" << std::endl;

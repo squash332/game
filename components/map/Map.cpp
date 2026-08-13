@@ -130,7 +130,7 @@ bool Map::isWalkable(int x, int y) const
             for (const Tile &tile : layer.tiles)
             {
                 if (tile.x == x && tile.y == y && tile.id != 0) {
-                    std::cout << "BLOCKED by layer: " << layer.name << " (id=" << tile.id << ") at (" << x << "," << y << ")" << std::endl;
+                    // std::cout << "BLOCKED by layer: " << layer.name << " (id=" << tile.id << ") at (" << x << "," << y << ")" << std::endl;
                     return false;
                 }
             }

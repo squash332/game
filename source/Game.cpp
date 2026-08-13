@@ -41,7 +41,8 @@ void Game::run()
 
         input_.update();
         player_.update(delta_time, frame);
-        if (collision::isTileWalkable(player_.getPlayerRect(), map_)) {
+        if (collision::isTileWalkable(player_.getPlayerHitbox(), map_))
+        {
             player_.confirmMove();
         }
         cam_.update(player_.getX(), player_.getY(), delta_time);
@@ -62,12 +63,19 @@ void Game::run()
             bool targeted = (current_target == enemy.get());
             renderer_.drawNameplate(*enemy, targeted);
             renderer_.drawEnemy(*enemy);
+            if (debug_mode)
+                DrawRectangleLines(enemy->getX(), enemy->getY(), enemy->getWidth(), enemy->getHeight(), GREEN);
         }
         renderer_.drawPlayer(player_);
 
-        // draw player rectangle hitbox
+        // green - collision box
+        // red - spritesheet draw box
         if (debug_mode)
-            DrawRectangleLines(player_.getX(), player_.getY(), player_.getWidth(), player_.getHeight(), GREEN);
+        {
+            DrawRectangleLines(player_.getX(), player_.getY(), SPRITE_WIDTH, SPRITE_HEIGHT, RED);
+            Rectangle hitbox = player_.getPlayerHitbox();
+            DrawRectangleLines(hitbox.x, hitbox.y, hitbox.width, hitbox.height, GREEN);
+        }
         // std::cout << player_.getX() << "," << player_.getY() << std::endl;
         // std::cout << "cols: " << map_.getCols() << " rows: " << map_.getRows() <<std::endl;
         cam_.endFrame();
