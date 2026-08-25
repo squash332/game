@@ -10,7 +10,7 @@ constexpr int TILE_SIZE = 16;
 // ANIMATION
 constexpr int NR_OF_FRAMES_IDLE = 2;
 constexpr int NR_OF_FRAMES_MOVING = 9;
-// constexpr int NR_OF_FRAMES_ATTACKING =
+constexpr int NR_OF_FRAMES_ATTACKING = 6;
 
 // MOVEMENT
 #define MOVEMENT_INDEX 120
@@ -30,3 +30,6 @@ constexpr int HITBOX_HEIGHT = (int)(SPRITE_HEIGHT * HITBOX_HEIGHT_RATIO);
 // ENEMY sprite
 constexpr int ENEMY_SPRITE_WIDTH = 16;
 constexpr int ENEMY_SPRITE_HEIGHT = 32;
+
+// ABILITY icons
+#define ABILITY_ICON_SIZE 36.0f

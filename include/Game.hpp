@@ -15,6 +15,7 @@
 #include "Enemy.hpp"
 #include "HUD.hpp"
 #include "Collision.hpp"
+#include "ActionBar.hpp"
 
 enum class GameState
 {
@@ -51,6 +52,7 @@ private:
   Renderer renderer_;
   Cam2d cam_;
   HUD hud_;
+  ActionBar action_bar_;
 
   std::vector<std::unique_ptr<Enemy>> enemies_;
 

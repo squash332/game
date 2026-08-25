@@ -8,8 +8,9 @@ Player::Player(std::string name)
       anim_state_(AnimationState::IdleDown)
 {
     std::cout << "player constructor ran" << std::endl;
-    std::cout << "player width: " << hitbox_width_<< std::endl;
-    std::cout << "player height: " << hitbox_height_<< std::endl;
+    std::cout << "player width: " << hitbox_width_ << std::endl;
+    std::cout << "player height: " << hitbox_height_ << std::endl;
+    abilities_ = loadAbilitiesForClass(PlayerClass::Warrior);
 }
 
 void Player::update(float delta, int frame)
@@ -88,6 +89,21 @@ void Player::update(float delta, int frame)
 void Player::attack()
 {
     // ATTACK BASED ON TARGET
+}
+
+std::vector <Ability> Player::loadAbilitiesForClass(PlayerClass playerClass)
+{
+    switch (playerClass)
+    {
+    case PlayerClass::Warrior:
+        return { { 1, LoadTexture("res/slash.png"), ABILITY_ICON_SIZE_VECTOR, "Slash" }, { 2, LoadTexture("res/clap.png"), ABILITY_ICON_SIZE_VECTOR, "Clap"} };
+    }
+    return {};
+}
+
+std::vector<Ability> Player::getAbilities() const
+{
+    return abilities_;
 }
 
 void Player::setDirection(Direction dir)

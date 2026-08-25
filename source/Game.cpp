@@ -7,7 +7,8 @@ Game::Game()
       renderer_(),
       map_("res/testmap.json"),
       cam_(),
-      hud_()
+      hud_(),
+      action_bar_()
 {
     enemies_.push_back(std::make_unique<Enemy>("knight"));
 
@@ -87,6 +88,8 @@ void Game::run()
         hud_.drawPlayerFrame(player_);
         if (current_target != nullptr)
             hud_.drawTargetedFrame(*current_target);
+        
+        action_bar_.draw(player_);
 
         displayLogs();
         game_window_.endFrame();

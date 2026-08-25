@@ -33,6 +33,7 @@ add_executable(game_exe
     ui/Renderer.cpp
     ui/Window.cpp
     ui/HUD.cpp
+    ui/ActionBar.cpp
 )
 
 target_include_directories(game_exe PRIVATE include ui/include)
