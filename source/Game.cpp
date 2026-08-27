@@ -23,7 +23,9 @@ Game::Game()
     input_.bindHeld(KEY_D, [this]
                     { player_.addDirection(Direction::Right); });
     input_.bindPressed(KEY_T, [this]
-                       { toggleDebugMode(); });
+                    { toggleDebugMode(); });
+    input_.bindPressed(KEY_Q, [this] 
+                    { player_.attack(); });
 }
 
 void Game::run()
@@ -32,7 +34,7 @@ void Game::run()
     {
         delta_time = GetFrameTime();
         timer += delta_time;
-        if (timer >= 0.2f)
+        if (timer >= 0.1f)
         {
             timer = 0.0f;
             frame++;

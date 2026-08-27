@@ -74,7 +74,7 @@ float Entity::getSpriteHeight() const
 Rectangle Entity::getHitboxAt(float posX, float posY) const
 {
     float offsetX = sprite_width_ / 2 - hitbox_width_ / 2;
-    float offsetY = sprite_height_ - hitbox_height_;
+    float offsetY = sprite_height_ - hitbox_height_ * 2;
 
     return Rectangle{posX + offsetX, posY + offsetY, hitbox_width_, hitbox_height_};
 }

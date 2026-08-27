@@ -3,14 +3,14 @@
 #include <iostream>
 
 // WINDOW
-constexpr int VIRTUAL_WIDTH = 480;
-constexpr int VIRTUAL_HEIGHT = 270;
+constexpr int VIRTUAL_WIDTH = 960;
+constexpr int VIRTUAL_HEIGHT = 540;
 constexpr int TILE_SIZE = 16;
 
 // ANIMATION
-constexpr int NR_OF_FRAMES_IDLE = 2;
-constexpr int NR_OF_FRAMES_MOVING = 9;
-constexpr int NR_OF_FRAMES_ATTACKING = 6;
+constexpr int NR_OF_FRAMES_IDLE = 8;
+constexpr int NR_OF_FRAMES_MOVING = 8;
+constexpr int NR_OF_FRAMES_ATTACKING = 8;
 
 // MOVEMENT
 #define MOVEMENT_INDEX 120

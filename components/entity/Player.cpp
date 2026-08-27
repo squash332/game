@@ -15,8 +15,15 @@ Player::Player(std::string name)
 
 void Player::update(float delta, int frame)
 {
-    // need to adjust which frame to draw based on state: idle or moving or attacking
     frame_number_ = frame;
+    if (is_attacking_) {
+        attack_timer_ += delta;
+        float attackDuration = NR_OF_FRAMES_ATTACKING * 0.1f;
+        if (attack_timer_ >= attackDuration) {
+            is_attacking_ = false;
+        }
+    }
+    // need to adjust which frame to draw based on state: idle or moving or attacking
     next_x_ = x_;
     next_y_ = y_;
 
@@ -32,7 +39,7 @@ void Player::update(float delta, int frame)
     if (direction_ & Direction::Up)
     {
         next_y_ -= step;
-        anim_state_ = AnimationState::WalkUp;
+        if (!is_attacking_) anim_state_ = AnimationState::WalkUp;
         last_direction_ = Direction::Up;
         moved = true;
     }
@@ -40,7 +47,7 @@ void Player::update(float delta, int frame)
     if (direction_ & Direction::Down)
     {
         next_y_ += step;
-        anim_state_ = AnimationState::WalkDown;
+        if (!is_attacking_) anim_state_ = AnimationState::WalkDown;
         last_direction_ = Direction::Down;
         moved = true;
     }
@@ -48,7 +55,7 @@ void Player::update(float delta, int frame)
     if (direction_ & Direction::Right)
     {
         next_x_ += step;
-        anim_state_ = AnimationState::WalkRight;
+        if (!is_attacking_) anim_state_ = AnimationState::WalkRight;
         last_direction_ = Direction::Right;
         moved = true;
     }
@@ -56,12 +63,12 @@ void Player::update(float delta, int frame)
     if (direction_ & Direction::Left)
     {
         next_x_ -= step;
-        anim_state_ = AnimationState::WalkLeft;
+        if (!is_attacking_) anim_state_ = AnimationState::WalkLeft;
         last_direction_ = Direction::Left;
         moved = true;
     }
 
-    if (!moved)
+    if (!moved && !is_attacking_)
     {
         switch (last_direction_)
         {
@@ -88,15 +95,37 @@ void Player::update(float delta, int frame)
 
 void Player::attack()
 {
+    if (is_attacking_) return;
+    is_attacking_ = true;
+    attack_timer_ = 0.0f;
+    attack_start_frame_ = frame_number_;
     // ATTACK BASED ON TARGET
+    switch (last_direction_)
+    {
+    case Direction::Up:
+        anim_state_ = AnimationState::SlashUp;
+        break;
+    case Direction::Down:
+        anim_state_ = AnimationState::SlashDown;
+        break;
+    case Direction::Left:
+        anim_state_ = AnimationState::SlashLeft;
+        break;
+    case Direction::Right:
+        anim_state_ = AnimationState::SlashRight;
+        break;
+    default:
+        anim_state_ = AnimationState::SlashRight;
+        break;
+    }
 }
 
-std::vector <Ability> Player::loadAbilitiesForClass(PlayerClass playerClass)
+std::vector<Ability> Player::loadAbilitiesForClass(PlayerClass playerClass)
 {
     switch (playerClass)
     {
     case PlayerClass::Warrior:
-        return { { 1, LoadTexture("res/slash.png"), ABILITY_ICON_SIZE_VECTOR, "Slash" }, { 2, LoadTexture("res/clap.png"), ABILITY_ICON_SIZE_VECTOR, "Clap"} };
+        return {{1, LoadTexture("res/slash.png"), ABILITY_ICON_SIZE_VECTOR, "Slash"}, {2, LoadTexture("res/clap.png"), ABILITY_ICON_SIZE_VECTOR, "Clap"}};
     }
     return {};
 }

@@ -30,6 +30,8 @@ public:
     void addDirection(Direction dir);
 
     AnimationState getAnimState() const { return anim_state_; }
+    bool isAttacking() const { return is_attacking_; }
+    int getAttackStartFrame() const { return attack_start_frame_; }
 
     void attack();
     std::vector<Ability> loadAbilitiesForClass(PlayerClass playerClass);
@@ -41,4 +43,7 @@ private:
     AnimationState anim_state_;
     Direction last_direction_ = Direction::None;
     std::vector<Ability> abilities_;
+    bool is_attacking_ = false;
+    float attack_timer_ = 0.0f;
+    int attack_start_frame_ = 0;
 };
