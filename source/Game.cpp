@@ -23,9 +23,13 @@ Game::Game()
     input_.bindHeld(KEY_D, [this]
                     { player_.addDirection(Direction::Right); });
     input_.bindPressed(KEY_T, [this]
-                    { toggleDebugMode(); });
-    input_.bindPressed(KEY_Q, [this] 
-                    { player_.attack(); });
+                       { toggleDebugMode(); });
+    input_.bindPressed(KEY_Q, [this]
+                       { if (current_target != nullptr &&current_target->is_ally_ == false &&player_.isInMeleeRange()) {
+                       player_.attack();
+                        if( !player_.isInMeleeRange()) {
+                            std::cout << "You are out of range." << std::endl;
+                        } } });
 }
 
 void Game::run()
@@ -40,7 +44,8 @@ void Game::run()
             frame++;
         }
         // std::cout << frame << std::endl;
-
+        // collision for melee attack check
+        updateTargetRange();
         input_.update();
         player_.update(delta_time, frame);
         tryMove();
@@ -58,17 +63,7 @@ void Game::run()
         renderer_.drawMap(map_);
         renderer_.drawNameplate(player_);
 
-        for (auto &enemy : enemies_)
-        {
-            bool targeted = (current_target == enemy.get());
-            renderer_.drawNameplate(*enemy, targeted);
-            renderer_.drawEnemy(*enemy);
-            if (debug_mode) {
-                DrawRectangleLines(enemy->getX(), enemy->getY(), enemy->getSpriteWidth(), enemy->getSpriteHeight(), RED);
-                Rectangle e_hitbox = enemy->getHitboxAt(enemy->getX(), enemy->getY());
-                DrawRectangleLines(e_hitbox.x, e_hitbox.y, e_hitbox.width, e_hitbox.height, GREEN);
-            }
-        }
+        updateEnemies();
         renderer_.drawPlayer(player_);
 
         // green - collision box
@@ -78,6 +73,12 @@ void Game::run()
             DrawRectangleLines(player_.getX(), player_.getY(), player_.getSpriteWidth(), player_.getSpriteHeight(), RED);
             Rectangle hitbox = player_.getHitboxAt(player_.getX(), player_.getY());
             DrawRectangleLines(hitbox.x, hitbox.y, hitbox.width, hitbox.height, GREEN);
+            renderer_.drawCircle(player_);
+            for (const auto &Enemy : enemies_)
+            {
+                auto x = Enemy.get();
+                renderer_.drawCircle(*x);
+            }
         }
         // std::cout << player_.getX() << "," << player_.getY() << std::endl;
         // std::cout << "cols: " << map_.getCols() << " rows: " << map_.getRows() <<std::endl;
@@ -90,7 +91,7 @@ void Game::run()
         hud_.drawPlayerFrame(player_);
         if (current_target != nullptr)
             hud_.drawTargetedFrame(*current_target);
-        
+
         action_bar_.draw(player_);
 
         displayLogs();
@@ -174,4 +175,35 @@ Vector2 Game::getVirtualMousePos()
     float scaleX = (float)VIRTUAL_WIDTH / GetScreenWidth();
     float scaleY = (float)VIRTUAL_HEIGHT / GetScreenHeight();
     return {mouse.x * scaleX, mouse.y * scaleY};
+}
+
+void Game::updateEnemies()
+{
+    for (auto &enemy : enemies_)
+    {
+        bool targeted = (current_target == enemy.get());
+        renderer_.drawNameplate(*enemy, targeted);
+        renderer_.drawEnemy(*enemy);
+
+        if (debug_mode)
+        {
+            DrawRectangleLines(enemy->getX(), enemy->getY(), enemy->getSpriteWidth(), enemy->getSpriteHeight(), RED);
+            Rectangle e_hitbox = enemy->getHitboxAt(enemy->getX(), enemy->getY());
+            DrawRectangleLines(e_hitbox.x, e_hitbox.y, e_hitbox.width, e_hitbox.height, GREEN);
+        }
+    }
+}
+
+void Game::updateTargetRange()
+{
+    if (current_target == nullptr) 
+        return;
+
+    bool in_range = collision::isInMeleeRange(player_, *current_target);
+    player_.setMeleeRange(in_range);
+}
+
+void Game::tryAttack() {
+    // TODO:
+    // move the function body from the ability lambda function here to make it cleaner
 }

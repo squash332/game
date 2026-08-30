@@ -2,7 +2,7 @@
 #include "Constants.hpp"
 #include "Entity.hpp"
 
-Enemy::Enemy(std::string name) : Entity(70.0f, 100.0f, false, ENEMY_SPRITE_WIDTH, ENEMY_SPRITE_HEIGHT, HITBOX_WIDTH, HITBOX_WIDTH),
+Enemy::Enemy(std::string name) : Entity(70.0f, 100.0f, false, ENEMY_SPRITE_WIDTH, ENEMY_SPRITE_HEIGHT, HITBOX_WIDTH, HITBOX_WIDTH, melee_hitbox_),
                                  name_(name)
                                  
 {

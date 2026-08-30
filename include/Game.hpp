@@ -40,6 +40,9 @@ public:
   void handleTargetClick();
   void tryMove();
   Vector2 getVirtualMousePos();
+  void updateEnemies();
+  void updateTargetRange();
+  void tryAttack();
 
   Entity *current_target = nullptr;
   Entity *focus_target = nullptr;

@@ -74,3 +74,12 @@ void Renderer::drawNameplate(const Entity &entity, bool isTargeted)
         DrawRectangleLines(barPos.x - 1, barPos.y - 1, barWidth + 2, barHeight + 2, YELLOW);
     }
 }
+
+void Renderer::drawCircle(const Entity &other) const
+{
+    MeleeRangeCircle hitbox = other.getMeleeHitbox();
+
+    Vector2 pos = {other.getX() + other.getSpriteWidth() / 2, other.getY() + other.getSpriteHeight() / 2};
+
+    DrawCircleV(pos, hitbox.radius, Fade(BLUE, 0.5));
+}

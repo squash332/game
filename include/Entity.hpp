@@ -5,10 +5,16 @@
 #include "raylib.h"
 #include "Constants.hpp"
 
+struct MeleeRangeCircle
+{
+  Vector2 center;
+  float radius;
+};
+
 class Entity
 {
 public:
-  Entity(float x, float y, bool isAlly, float sprite_width, float sprite_height, float hitbox_width, float hitbox_height);
+  Entity(float x, float y, bool isAlly, float sprite_width, float sprite_height, float hitbox_width, float hitbox_height, MeleeRangeCircle melee);
   Entity(const Entity &other) = default;
   virtual ~Entity() = default;
 
@@ -24,6 +30,9 @@ public:
   float getSpriteWidth() const;
   float getSpriteHeight() const;
   Rectangle getHitboxAt(float posX, float posY) const;
+  MeleeRangeCircle getMeleeHitbox() const;
+  bool isInMeleeRange() const;
+  void setMeleeRange(bool melee_range);
 
   bool is_ally_;
 
@@ -39,4 +48,6 @@ protected:
   float sprite_height_;
   float hitbox_width_;
   float hitbox_height_;
+  MeleeRangeCircle melee_hitbox_;
+  bool in_melee_range_;
 };

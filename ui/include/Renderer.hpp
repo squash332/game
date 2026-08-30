@@ -17,7 +17,8 @@ public:
     void drawMap(const Map &other);
     void drawEnemy(const Enemy &other);
     void drawNameplate(const Entity &entity, bool isTargeted = false);
-    
+    void drawCircle(const Entity &other) const;
+
 protected:
 private:
     Texture2D player_sprite_;

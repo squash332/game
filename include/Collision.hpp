@@ -1,15 +1,10 @@
 #pragma once
 
 #include "Map.hpp"
-
-struct CircleHitbox
-{
-    Vector2 center;
-    float radius;
-};
+#include "Entity.hpp"
 
 namespace collision
 {
     bool isTileWalkable(Rectangle givenPos, const Map &map);
-    bool isMeleeRange(CircleHitbox hitbox1, CircleHitbox hitbox2);
+    bool isInMeleeRange(const Entity &other1, const Entity &other2);
 } // collision

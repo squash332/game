@@ -3,7 +3,7 @@
 #include <math.h>
 
 Player::Player(std::string name)
-    : Entity(50.0f, 150.0f, true, SPRITE_WIDTH, SPRITE_HEIGHT, HITBOX_WIDTH, HITBOX_HEIGHT),
+    : Entity(50.0f, 150.0f, true, SPRITE_WIDTH, SPRITE_HEIGHT, HITBOX_WIDTH, HITBOX_HEIGHT, MeleeRangeCircle{}),
       name_(name),
       anim_state_(AnimationState::IdleDown)
 {
@@ -11,15 +11,18 @@ Player::Player(std::string name)
     std::cout << "player width: " << hitbox_width_ << std::endl;
     std::cout << "player height: " << hitbox_height_ << std::endl;
     abilities_ = loadAbilitiesForClass(PlayerClass::Warrior);
+    in_melee_range_ = false;
 }
 
 void Player::update(float delta, int frame)
 {
     frame_number_ = frame;
-    if (is_attacking_) {
+    if (is_attacking_)
+    {
         attack_timer_ += delta;
         float attackDuration = NR_OF_FRAMES_ATTACKING * 0.1f;
-        if (attack_timer_ >= attackDuration) {
+        if (attack_timer_ >= attackDuration)
+        {
             is_attacking_ = false;
         }
     }
@@ -39,7 +42,8 @@ void Player::update(float delta, int frame)
     if (direction_ & Direction::Up)
     {
         next_y_ -= step;
-        if (!is_attacking_) anim_state_ = AnimationState::WalkUp;
+        if (!is_attacking_)
+            anim_state_ = AnimationState::WalkUp;
         last_direction_ = Direction::Up;
         moved = true;
     }
@@ -47,7 +51,8 @@ void Player::update(float delta, int frame)
     if (direction_ & Direction::Down)
     {
         next_y_ += step;
-        if (!is_attacking_) anim_state_ = AnimationState::WalkDown;
+        if (!is_attacking_)
+            anim_state_ = AnimationState::WalkDown;
         last_direction_ = Direction::Down;
         moved = true;
     }
@@ -55,7 +60,8 @@ void Player::update(float delta, int frame)
     if (direction_ & Direction::Right)
     {
         next_x_ += step;
-        if (!is_attacking_) anim_state_ = AnimationState::WalkRight;
+        if (!is_attacking_)
+            anim_state_ = AnimationState::WalkRight;
         last_direction_ = Direction::Right;
         moved = true;
     }
@@ -63,7 +69,8 @@ void Player::update(float delta, int frame)
     if (direction_ & Direction::Left)
     {
         next_x_ -= step;
-        if (!is_attacking_) anim_state_ = AnimationState::WalkLeft;
+        if (!is_attacking_)
+            anim_state_ = AnimationState::WalkLeft;
         last_direction_ = Direction::Left;
         moved = true;
     }
@@ -95,11 +102,12 @@ void Player::update(float delta, int frame)
 
 void Player::attack()
 {
-    if (is_attacking_) return;
+    if (is_attacking_)
+        return;
     is_attacking_ = true;
     attack_timer_ = 0.0f;
     attack_start_frame_ = frame_number_;
-    // ATTACK BASED ON TARGET
+
     switch (last_direction_)
     {
     case Direction::Up:
