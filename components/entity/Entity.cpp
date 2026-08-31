@@ -99,3 +99,8 @@ void Entity::setMeleeRange(bool melee_range)
 {
     in_melee_range_ = melee_range;
 }
+
+void Entity::takeDamage(float damage)
+{
+    current_health_ -= damage;
+}

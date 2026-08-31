@@ -43,6 +43,7 @@ public:
   void updateEnemies();
   void updateTargetRange();
   void tryAttack();
+  void handleDebugMode();
 
   Entity *current_target = nullptr;
   Entity *focus_target = nullptr;

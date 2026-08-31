@@ -33,6 +33,7 @@ public:
   MeleeRangeCircle getMeleeHitbox() const;
   bool isInMeleeRange() const;
   void setMeleeRange(bool melee_range);
+  void takeDamage(float damage);
 
   bool is_ally_;
 
