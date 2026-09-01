@@ -44,6 +44,8 @@ public:
   void updateTargetRange();
   void tryAttack();
   void handleDebugMode();
+  void handleEscapeKey();
+
 
   Entity *current_target = nullptr;
   Entity *focus_target = nullptr;

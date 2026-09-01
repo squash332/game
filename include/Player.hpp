@@ -33,7 +33,7 @@ public:
     bool isAttacking() const { return is_attacking_; }
     int getAttackStartFrame() const { return attack_start_frame_; }
 
-    void attack();
+    void attack(Direction dir);
     std::vector<Ability> loadAbilitiesForClass(PlayerClass playerClass);
     std::vector<Ability> getAbilities() const;
     int frame_number_ = 0;

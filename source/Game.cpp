@@ -26,6 +26,8 @@ Game::Game()
                        { toggleDebugMode(); });
     input_.bindPressed(KEY_Q, [this]
                        { tryAttack(); });
+    input_.bindPressed(KEY_ESCAPE, [this]
+                       { handleEscapeKey(); });
 }
 
 void Game::run()
@@ -118,7 +120,10 @@ void Game::handleTargetClick()
     if (current_target != nullptr && CheckCollisionPointRec(mouseScreen, hud_.getTargetFrame()))
         return;
     if (current_target != nullptr && CheckCollisionPointRec(mouseScreen, hud_.getPlayerFrame()))
+    {
+        current_target = &player_;
         return;
+    }
     if (current_target == nullptr && CheckCollisionPointRec(mouseScreen, hud_.getPlayerFrame()))
     {
         current_target = &player_;
@@ -213,7 +218,15 @@ void Game::tryAttack()
         std::cout << "Current target is not hostile." << std::endl;
         return;
     }
-    player_.attack();
+
+    // compare the melee circles and turn the player towards his target when attacking and retain this position
+    MeleeRangeCircle player_circle = player_.getMeleeHitbox();
+    MeleeRangeCircle target_circle = current_target->getMeleeHitbox();
+    Direction facing_towards_enemy = getDirectionToTarget(player_circle.center.x, player_circle.center.y, target_circle.center.x, target_circle.center.y);
+
+    player_.attack(facing_towards_enemy);
+
+    // TODO: make the abilities a struct and then extract the damage, cost, cooldown etc based on need (here damage which is being dealt)
     current_target->takeDamage(20);
 }
 
@@ -233,4 +246,14 @@ void Game::handleDebugMode()
             renderer_.drawCircle(*x);
         }
     }
+}
+
+void Game::handleEscapeKey() {
+    if (current_target == nullptr) {
+        // show settings screen
+        return;
+    }
+
+    current_target = nullptr;
+    
 }

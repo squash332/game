@@ -100,15 +100,16 @@ void Player::update(float delta, int frame)
     direction_ = Direction::None;
 }
 
-void Player::attack()
+void Player::attack(Direction dir)
 {
     if (is_attacking_)
         return;
     is_attacking_ = true;
     attack_timer_ = 0.0f;
     attack_start_frame_ = frame_number_;
-
-    switch (last_direction_)
+    direction_ = dir;
+    
+    switch (dir)
     {
     case Direction::Up:
         anim_state_ = AnimationState::SlashUp;
