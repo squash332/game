@@ -40,7 +40,7 @@ void Game::run()
             frame++;
         }
         updateTargetRange();
-        
+
         input_.update();
         player_.update(delta_time, frame);
         tryMove();
@@ -109,11 +109,23 @@ void Game::handleTargetClick()
     // TODO :: later when combat implemented, it will feel bad and clunky
     // turn off not targeting anything when in combat
     // or maybe hide mouse while holding right click just like in wow or maybe untarget just with ESCAPE
-    current_target = nullptr;
 
     // compute mouse position in our game in relation to camera
     Vector2 mouseScreen = getVirtualMousePos();
     Vector2 mouseWorld = GetScreenToWorld2D(mouseScreen, cam_.getCamera());
+    std::cout << mouseWorld.x << ", " << mouseWorld.y << std::endl;
+    // if player clicks on his player frame, nothing happens
+    if (current_target != nullptr && CheckCollisionPointRec(mouseScreen, hud_.getTargetFrame()))
+        return;
+    if (current_target != nullptr && CheckCollisionPointRec(mouseScreen, hud_.getPlayerFrame()))
+        return;
+    if (current_target == nullptr && CheckCollisionPointRec(mouseScreen, hud_.getPlayerFrame()))
+    {
+        current_target = &player_;
+        return;
+    }
+
+    // current_target = nullptr;
 
     for (auto &enemy : enemies_)
     {
@@ -121,13 +133,13 @@ void Game::handleTargetClick()
         if (CheckCollisionPointRec(mouseWorld, bounds))
         {
             current_target = enemy.get();
-            break;
+            return;
         }
     }
 
     Rectangle player = {player_.getX(), player_.getY(), player_.getSpriteWidth(), player_.getSpriteHeight()};
 
-    if (CheckCollisionPointRec(mouseWorld, player))
+    if (CheckCollisionPointRec(mouseWorld, player) || CheckCollisionPointRec(mouseWorld, hud_.getPlayerFrame()))
     {
         current_target = &player_;
         return;
@@ -182,7 +194,8 @@ void Game::updateTargetRange()
 void Game::tryAttack()
 {
     // without this, spamming the ability fast removes the target's hp even though player attacked once
-    if (player_.isAttacking()) {
+    if (player_.isAttacking())
+    {
         return;
     }
     if (!player_.isInMeleeRange())

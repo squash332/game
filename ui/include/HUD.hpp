@@ -13,6 +13,10 @@ class HUD {
 
     void drawPlayerFrame(const Player& other);
     void drawTargetedFrame(const Entity& other);
+    Rectangle getPlayerFrame() const;
+    Rectangle getTargetFrame() const;
+    Rectangle getFocusFrame() const;
+
     protected:
     private:
     Rectangle player_frame_;
