@@ -203,7 +203,7 @@ void Game::tryAttack()
     {
         return;
     }
-    if (!player_.isInMeleeRange())
+    if (!player_.isInMeleeRange() && current_target != nullptr)
     {
         std::cout << "You are out of range." << std::endl;
         return;
@@ -249,11 +249,11 @@ void Game::handleDebugMode()
 }
 
 void Game::handleEscapeKey() {
+    current_target = nullptr;
     if (current_target == nullptr) {
         // show settings screen
         return;
     }
 
-    current_target = nullptr;
     
 }

@@ -1,8 +1,10 @@
 #include "HUD.hpp"
 
-HUD::HUD() : player_frame_({10.0f, 10.0f, 60.0f, 10.0f}),
-             targeted_frame_({80.0f, 10.0f, 60.0f, 10.0f})
+HUD::HUD()
 {
+    Settings settings = loadSettings(SETTINGS_PATH);
+    player_frame_ = settings.player_frame_config;
+    targeted_frame_ = settings.targeted_frame_config;
 }
 
 HUD::~HUD()

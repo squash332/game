@@ -4,6 +4,7 @@
 #include "Player.hpp"
 #include "Enemy.hpp"
 #include "Constants.hpp"
+#include "Settings.hpp"
 
 class HUD {
     public:
