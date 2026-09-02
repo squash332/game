@@ -8,7 +8,8 @@ Game::Game()
       map_("res/testmap.json"),
       cam_(),
       hud_(),
-      action_bar_()
+      action_bar_(),
+      drawn_menu(false)
 {
     enemies_.push_back(std::make_unique<Enemy>("knight"));
 
@@ -67,9 +68,11 @@ void Game::run()
         cam_.endFrame();
 
         hud_.drawPlayerFrame(player_);
-        if (current_target != nullptr)
+        if (current_target != nullptr) 
             hud_.drawTargetedFrame(*current_target);
-
+            
+        if (drawn_menu) 
+            hud_.drawSettingsWindow();
         action_bar_.draw(player_);
 
         displayLogs();
@@ -115,7 +118,7 @@ void Game::handleTargetClick()
     // compute mouse position in our game in relation to camera
     Vector2 mouseScreen = getVirtualMousePos();
     Vector2 mouseWorld = GetScreenToWorld2D(mouseScreen, cam_.getCamera());
-    std::cout << mouseWorld.x << ", " << mouseWorld.y << std::endl;
+    std::cout << mouseScreen.x << ", " << mouseScreen.y << std::endl;
     // if player clicks on his player frame, nothing happens
     if (current_target != nullptr && CheckCollisionPointRec(mouseScreen, hud_.getTargetFrame()))
         return;
@@ -249,11 +252,18 @@ void Game::handleDebugMode()
 }
 
 void Game::handleEscapeKey() {
-    current_target = nullptr;
-    if (current_target == nullptr) {
-        // show settings screen
+    // if menu drawn, remove the menu
+    if (current_target != nullptr) {
+        current_target = nullptr;
+        return;
+    }
+    if(!drawn_menu && current_target == nullptr) {
+        drawn_menu = true;
         return;
     }
 
-    
+    if(drawn_menu) {
+        drawn_menu = false;
+        return;
+    }
 }

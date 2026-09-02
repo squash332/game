@@ -45,6 +45,7 @@ public:
   void tryAttack();
   void handleDebugMode();
   void handleEscapeKey();
+  bool drawn_menu;
 
 
   Entity *current_target = nullptr;
