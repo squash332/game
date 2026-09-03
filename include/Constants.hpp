@@ -21,11 +21,11 @@ constexpr int SPRITE_HEIGHT = 64;
 
 // CHARACTER HITBOX RELATED GREEN
 constexpr float HITBOX_WIDTH_RATIO = 0.25f;  // hitbox is 1/4 sprite's width
-constexpr float HITBOX_HEIGHT_RATIO = 0.25f;  // hitbox is 1/2 sprite's height
+constexpr float HITBOX_HEIGHT_RATIO = 0.25f; // hitbox is 1/2 sprite's height
 
 // COLLISION (movement hitbox — small, near the feet) GREEN
-constexpr int HITBOX_WIDTH = (int)(SPRITE_WIDTH * HITBOX_WIDTH_RATIO); 
-constexpr int HITBOX_HEIGHT = (int)(SPRITE_HEIGHT * HITBOX_HEIGHT_RATIO); 
+constexpr int HITBOX_WIDTH = (int)(SPRITE_WIDTH * HITBOX_WIDTH_RATIO);
+constexpr int HITBOX_HEIGHT = (int)(SPRITE_HEIGHT * HITBOX_HEIGHT_RATIO);
 
 // ENEMY sprite
 constexpr int ENEMY_SPRITE_WIDTH = 16;
@@ -35,10 +35,13 @@ constexpr int ENEMY_SPRITE_HEIGHT = 32;
 #define ABILITY_ICON_SIZE 36.0f
 
 // PATHS
-const std::string SETTINGS_PATH = "settings.json";
+const std::string SETTINGS_PATH = "ui_settings.json";
 
 // UI RELATED
 constexpr int BTN_PADDING = 10;
 constexpr int FONT_SIZE = 15;
 constexpr int NR_OF_OPTIONS = 5;
-#define BUTTON_BG_COLOR Fade(RED, 0.7)
+#define COLOR_BUTTON_BG Fade(RED, 0.7)
+#define COLOR_WINDOW_BG Fade(GRAY, 0.7)
+#define COLOR_EDITABLE_COMPONENT Fade(BLUE, 0.5)
+#define OUTLINE_THICKNESS 5.0f

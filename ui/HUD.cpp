@@ -5,6 +5,11 @@ HUD::HUD()
     Settings settings = loadSettings(SETTINGS_PATH);
     player_frame_ = settings.player_frame_config;
     targeted_frame_ = settings.targeted_frame_config;
+    settings_window_.height = VIRTUAL_HEIGHT / 2;
+    settings_window_.width = VIRTUAL_HEIGHT / 2;
+    settings_window_.x = VIRTUAL_WIDTH / 2 - settings_window_.width / 2;
+    settings_window_.y = VIRTUAL_HEIGHT / 2 - settings_window_.height / 2;
+    edit_mode_button_ = {{settings_window_.x + BTN_PADDING, settings_window_.y + BTN_PADDING, settings_window_.width - BTN_PADDING * 2, settings_window_.height / NR_OF_OPTIONS}, "Edit mode"};
 }
 
 HUD::~HUD()
@@ -35,20 +40,13 @@ void HUD::drawTargetedFrame(const Entity &entity)
     }
 }
 
-void HUD::drawSettingsWindow()
+void HUD::drawSettingsWindow( )
 {
-    Rectangle window;
-    window.height = VIRTUAL_HEIGHT / 2;
-    window.width = VIRTUAL_HEIGHT / 2;
-    window.x = VIRTUAL_WIDTH / 2 - window.width / 2;
-    window.y = VIRTUAL_HEIGHT / 2 - window.height / 2;
-
     // draw window
-    DrawRectangle(window.x, window.y, window.width, window.height, Fade(GRAY, 0.7));
+    DrawRectangleRec(settings_window_, Fade(GRAY, 0.7));
 
     // buttons on top of window
-    Button edit_mode = {{window.x + BTN_PADDING, window.y + BTN_PADDING, window.width - BTN_PADDING * 2, window.height / NR_OF_OPTIONS}, "Edit mode"};
-    drawButton(edit_mode, FONT_SIZE, BUTTON_BG_COLOR, WHITE);
+    drawButton(edit_mode_button_, FONT_SIZE, COLOR_BUTTON_BG, WHITE);
 }
 
 void HUD::drawCenteredText(const std::string &text, Rectangle bounds, int fontSize, Color color)
@@ -60,16 +58,62 @@ void HUD::drawCenteredText(const std::string &text, Rectangle bounds, int fontSi
     DrawText(text.c_str(), (int)textX, (int)textY, fontSize, color);
 }
 
-bool HUD::drawButton(const Button &button, int fontSize, Color bgColor, Color textColor)
+void HUD::drawButton(const Button &button, int fontSize, Color bgColor, Color textColor)
 {
     DrawRectangleRec(button.bounds, bgColor);
     drawCenteredText(button.label, button.bounds, fontSize, textColor);
 
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), button.bounds))
+}
+
+// detects a mouse click and signals that drag'n drop action can begin
+void HUD::handleComponentClick(Vector2 mouse)
+{
+    if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        return;
+    if (drag_state_.active)
+        return;
+
+    if (CheckCollisionPointRec(mouse, player_frame_))
     {
-        return true;
+        drag_state_.start(&player_frame_, mouse, {player_frame_.x, player_frame_.y});
     }
-    return false;
+    else if (CheckCollisionPointRec(mouse, targeted_frame_))
+    {
+        drag_state_.start(&targeted_frame_, mouse, {targeted_frame_.x, targeted_frame_.y});
+    }
+}
+
+void HUD::handleDrag(Vector2 mouse)
+{
+    if (!drag_state_.active)
+        return;
+
+    drag_state_.update(mouse);
+
+    Rectangle *frame = static_cast<Rectangle *>(drag_state_.dragged_item);
+    frame->x = drag_state_.current_pos.x;
+    frame->y = drag_state_.current_pos.y;
+
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
+    {
+        drag_state_.end();
+    }
+}
+
+void HUD::update(Vector2 mouse)
+{
+    handleComponentClick(mouse);
+    handleDrag(mouse);
+}
+
+void HUD::setPlayerFrame(Rectangle frame)
+{  
+   player_frame_ = frame; 
+}
+
+void HUD::setTargetFrame(Rectangle frame)
+{
+    targeted_frame_ = frame;
 }
 
 Rectangle HUD::getPlayerFrame() const
@@ -85,4 +129,9 @@ Rectangle HUD::getTargetFrame() const
 Rectangle HUD::getFocusFrame() const
 {
     return focus_frame_;
+}
+
+Rectangle HUD::getBtnEditModeBounds() const
+{
+    return edit_mode_button_.bounds;
 }

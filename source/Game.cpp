@@ -9,7 +9,14 @@ Game::Game()
       cam_(),
       hud_(),
       action_bar_(),
-      drawn_menu(false)
+      drawn_menu(false),
+      in_edit_mode(false),
+      cached_player_frame_{0},
+      cached_target_frame_{0},
+      cached_focus_frame_{0},
+      save_btn_{0},
+      discard_btn_{0},
+      mouseScreen{0}
 {
     enemies_.push_back(std::make_unique<Enemy>("knight"));
 
@@ -35,6 +42,7 @@ void Game::run()
 {
     while (!game_window_.shouldClose())
     {
+        mouseScreen = getVirtualMousePos();
         delta_time = GetFrameTime();
         timer += delta_time;
         if (timer >= 0.1f)
@@ -44,6 +52,12 @@ void Game::run()
         }
         updateTargetRange();
 
+        if (in_edit_mode)
+        {
+            cachePositions();
+            updateEditMode();
+        }
+        
         input_.update();
         player_.update(delta_time, frame);
         tryMove();
@@ -51,32 +65,40 @@ void Game::run()
         cam_.update(player_.getX(), player_.getY(), delta_time);
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
-            handleTargetClick();
+            if (!in_edit_mode)
+                handleTargetClick();
+            
+            handleMenuClick();
         }
 
+        // start drawing
         game_window_.beginFrame();
         ClearBackground(BLACK);
+
+        // start camera
         cam_.beginFrame();
 
         renderer_.drawMap(map_);
         renderer_.drawNameplate(player_);
-
-        updateEnemies();
         renderer_.drawPlayer(player_);
 
+        updateEnemies();
         handleDebugMode();
         cam_.endFrame();
+        // end camera
 
         hud_.drawPlayerFrame(player_);
-        if (current_target != nullptr) 
+        if (current_target != nullptr)
             hud_.drawTargetedFrame(*current_target);
-            
-        if (drawn_menu) 
+        if (drawn_menu)
             hud_.drawSettingsWindow();
+        if (in_edit_mode)
+            drawEditMode();
         action_bar_.draw(player_);
 
         displayLogs();
         game_window_.endFrame();
+        // end drawing
     }
 }
 
@@ -116,9 +138,7 @@ void Game::handleTargetClick()
     // or maybe hide mouse while holding right click just like in wow or maybe untarget just with ESCAPE
 
     // compute mouse position in our game in relation to camera
-    Vector2 mouseScreen = getVirtualMousePos();
     Vector2 mouseWorld = GetScreenToWorld2D(mouseScreen, cam_.getCamera());
-    std::cout << mouseScreen.x << ", " << mouseScreen.y << std::endl;
     // if player clicks on his player frame, nothing happens
     if (current_target != nullptr && CheckCollisionPointRec(mouseScreen, hud_.getTargetFrame()))
         return;
@@ -251,19 +271,82 @@ void Game::handleDebugMode()
     }
 }
 
-void Game::handleEscapeKey() {
-    // if menu drawn, remove the menu
-    if (current_target != nullptr) {
+void Game::handleEscapeKey()
+{
+    // first remove current target, then on another 'ESC' click open the settings menu
+    if (current_target != nullptr)
+    {
         current_target = nullptr;
         return;
     }
-    if(!drawn_menu && current_target == nullptr) {
-        drawn_menu = true;
+
+    drawn_menu = !drawn_menu;
+    in_edit_mode = false;
+}
+
+void Game::handleMenuClick()
+{
+    if (CheckCollisionPointRec(mouseScreen, hud_.getBtnEditModeBounds()))
+    {
+        drawn_menu = false;
+        in_edit_mode = true;
+        std::cout << "clicked on edit mode" << std::endl;
         return;
     }
-
-    if(drawn_menu) {
-        drawn_menu = false;
+    if (CheckCollisionPointRec(mouseScreen, save_btn_.bounds))
+    {
+        endEditMode(true);
         return;
+    }
+    else if (CheckCollisionPointRec(mouseScreen, discard_btn_.bounds))
+    {
+        endEditMode(false);
+        return;
+    }
+}
+
+void Game::cachePositions()
+{
+    // cache positions?
+    cached_player_frame_ = hud_.getPlayerFrame();
+    cached_target_frame_ = hud_.getTargetFrame();
+}
+
+void Game::updateEditMode()
+{
+    hud_.update(mouseScreen);
+}
+
+void Game::drawEditMode()
+{
+    Rectangle edit_mode_window = centerRectOnScreen(VIRTUAL_HEIGHT / 1.5, VIRTUAL_HEIGHT / 3);
+    DrawRectangleRec(edit_mode_window, COLOR_WINDOW_BG);
+
+    // buttons: Discard Changes & Save
+    DrawRectangleRec(centerRectInRect(edit_mode_window, VIRTUAL_HEIGHT / 1.5, VIRTUAL_HEIGHT / 3), COLOR_WINDOW_BG);
+    save_btn_ = {centerRectInRect(edit_mode_window, edit_mode_window.width / 4, edit_mode_window.height / 4), "Save"};
+    
+    // discard_btn_ =
+    hud_.drawButton(save_btn_, FONT_SIZE, BLACK, WHITE);
+
+    DrawRectangleLinesEx(hud_.getPlayerFrame(), 2.0f, COLOR_EDITABLE_COMPONENT);
+    DrawRectangleLinesEx(hud_.getTargetFrame(), 2.0f, COLOR_EDITABLE_COMPONENT);
+}
+
+void Game::endEditMode(bool save)
+{
+    in_edit_mode = false;
+
+    if (save)
+    {
+        Settings settings;
+        settings.player_frame_config = hud_.getPlayerFrame();
+        settings.targeted_frame_config = hud_.getTargetFrame();
+        saveSettings(settings, SETTINGS_PATH);
+    }
+    else
+    {
+        hud_.setPlayerFrame(cached_player_frame_);
+        hud_.setTargetFrame(cached_target_frame_);
     }
 }

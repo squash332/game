@@ -38,7 +38,7 @@ Settings loadSettings(const std::string &path)
 
     json j = json::parse(file);
     settings.player_frame_config = j["player_frame_config"].get<Rectangle>();
-    settings.targeted_frame_config = j["targeted_frame_config"].get<Rectangle>();
+    settings.targeted_frame_config = j["target_frame_config"].get<Rectangle>();
 
     return settings;
 }

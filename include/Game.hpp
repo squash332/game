@@ -16,6 +16,7 @@
 #include "HUD.hpp"
 #include "Collision.hpp"
 #include "ActionBar.hpp"
+#include "PositioningUtilites.hpp"
 
 enum class GameState
 {
@@ -43,9 +44,20 @@ public:
   void updateEnemies();
   void updateTargetRange();
   void tryAttack();
-  void handleDebugMode();
+
+  void handleDebugMode(); // open with 'T' keybind
   void handleEscapeKey();
+
+  // HUD relevant 
+  void handleMenuClick();
   bool drawn_menu;
+  bool in_edit_mode;
+  void cachePositions();
+  void updateEditMode();
+  void drawEditMode();
+  void endEditMode(bool save);
+
+  Vector2 mouseScreen;
 
 
   Entity *current_target = nullptr;
@@ -60,6 +72,13 @@ private:
   Cam2d cam_;
   HUD hud_;
   ActionBar action_bar_;
+
+  Rectangle cached_player_frame_;
+  Rectangle cached_target_frame_;
+  Rectangle cached_focus_frame_;
+
+  Button save_btn_;
+  Button discard_btn_;
 
   std::vector<std::unique_ptr<Enemy>> enemies_;
 

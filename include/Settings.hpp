@@ -7,8 +7,8 @@
 
 
 struct Settings  {
-    Rectangle player_frame_config = {10.0f, 10.0f, 60.0f, 10.0f};
-    Rectangle targeted_frame_config = {80.0f, 10.0f, 60.0f, 10.0f};
+    Rectangle player_frame_config = {10.0f, 10.0f, 80.0f, 20.0f};
+    Rectangle targeted_frame_config = {100.0f, 10.0f, 80.0f, 20.0f};
 };
 
 void saveSettings(const Settings &settings, const std::string &path);
