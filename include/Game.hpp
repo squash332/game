@@ -17,6 +17,7 @@
 #include "Collision.hpp"
 #include "ActionBar.hpp"
 #include "PositioningUtilites.hpp"
+#include "Mouse.hpp"
 
 enum class GameState
 {
@@ -40,7 +41,6 @@ public:
   bool debug_mode = false;
   void handleTargetClick();
   void tryMove();
-  Vector2 getVirtualMousePos();
   void updateEnemies();
   void updateTargetRange();
   void tryAttack();
@@ -56,8 +56,6 @@ public:
   void updateEditMode();
   void drawEditMode();
   void endEditMode(bool save);
-
-  Vector2 mouseScreen;
 
 
   Entity *current_target = nullptr;

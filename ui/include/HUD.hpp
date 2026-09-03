@@ -6,6 +6,7 @@
 #include "Constants.hpp"
 #include "Settings.hpp"
 #include "DragDropManager.hpp"
+#include "Mouse.hpp"
 
 struct Button
 {
@@ -33,7 +34,7 @@ public:
     void drawButton(const Button &button, int fontSize, Color bgColor, Color textColor);
 
 
-    void update(Vector2 mouse);
+    void update();
     
     void setPlayerFrame(Rectangle frame);
     void setTargetFrame(Rectangle frame);
@@ -52,6 +53,6 @@ private:
     DragState drag_state_;
     Rectangle settings_window_;
     Button edit_mode_button_;
-    void handleComponentClick(Vector2 mouse);
-    void handleDrag(Vector2 mouse);
+    void handleComponentClick();
+    void handleDrag();
 };

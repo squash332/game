@@ -1,5 +1,6 @@
 #pragma once
 #include "raylib.h"
+#include "Mouse.hpp"
 
 struct DragState
 {
@@ -9,20 +10,20 @@ struct DragState
     Vector2 current_pos = {0, 0};
 
     // 
-    void start(void* item, Vector2 mousePos, Vector2 itemPos)
+    void start(void* item, Vector2 itemPos)
     {
         active = true;
         dragged_item = item;
-        drag_offset = {mousePos.x - itemPos.x, mousePos.y - itemPos.y};
+        drag_offset = {mouse.x - itemPos.x, mouse.y - itemPos.y};
 
         current_pos = itemPos;
 
     }
 
-    void update(Vector2 mousePos)
+    void update()
     {
         if (!active) return;
-        current_pos = {mousePos.x - drag_offset.x, mousePos.y - drag_offset.y};
+        current_pos = {mouse.x - drag_offset.x, mouse.y - drag_offset.y};
 
     }
 

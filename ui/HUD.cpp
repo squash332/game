@@ -66,44 +66,38 @@ void HUD::drawButton(const Button &button, int fontSize, Color bgColor, Color te
 }
 
 // detects a mouse click and signals that drag'n drop action can begin
-void HUD::handleComponentClick(Vector2 mouse)
+void HUD::handleComponentClick()
 {
-    if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        return;
-    if (drag_state_.active)
-        return;
+    if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) return;
+    if (drag_state_.active) return;
 
     if (CheckCollisionPointRec(mouse, player_frame_))
     {
-        drag_state_.start(&player_frame_, mouse, {player_frame_.x, player_frame_.y});
+        drag_state_.start(&player_frame_, {player_frame_.x, player_frame_.y});
     }
     else if (CheckCollisionPointRec(mouse, targeted_frame_))
     {
-        drag_state_.start(&targeted_frame_, mouse, {targeted_frame_.x, targeted_frame_.y});
+        drag_state_.start(&targeted_frame_, {targeted_frame_.x, targeted_frame_.y});
     }
 }
 
-void HUD::handleDrag(Vector2 mouse)
+void HUD::handleDrag()
 {
-    if (!drag_state_.active)
-        return;
+    if (!drag_state_.active) return;
 
-    drag_state_.update(mouse);
+    drag_state_.update();
 
     Rectangle *frame = static_cast<Rectangle *>(drag_state_.dragged_item);
     frame->x = drag_state_.current_pos.x;
     frame->y = drag_state_.current_pos.y;
 
-    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
-    {
-        drag_state_.end();
-    }
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) drag_state_.end();
 }
 
-void HUD::update(Vector2 mouse)
+void HUD::update()
 {
-    handleComponentClick(mouse);
-    handleDrag(mouse);
+    handleComponentClick();
+    handleDrag();
 }
 
 void HUD::setPlayerFrame(Rectangle frame)

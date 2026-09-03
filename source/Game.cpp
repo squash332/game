@@ -15,8 +15,7 @@ Game::Game()
       cached_target_frame_{0},
       cached_focus_frame_{0},
       save_btn_{0},
-      discard_btn_{0},
-      mouseScreen{0}
+      discard_btn_{0}
 {
     enemies_.push_back(std::make_unique<Enemy>("knight"));
 
@@ -42,7 +41,8 @@ void Game::run()
 {
     while (!game_window_.shouldClose())
     {
-        mouseScreen = getVirtualMousePos();
+        updateMouse();
+
         delta_time = GetFrameTime();
         timer += delta_time;
         if (timer >= 0.1f)
@@ -138,16 +138,16 @@ void Game::handleTargetClick()
     // or maybe hide mouse while holding right click just like in wow or maybe untarget just with ESCAPE
 
     // compute mouse position in our game in relation to camera
-    Vector2 mouseWorld = GetScreenToWorld2D(mouseScreen, cam_.getCamera());
+    Vector2 mouseWorld = GetScreenToWorld2D(mouse, cam_.getCamera());
     // if player clicks on his player frame, nothing happens
-    if (current_target != nullptr && CheckCollisionPointRec(mouseScreen, hud_.getTargetFrame()))
+    if (current_target != nullptr && CheckCollisionPointRec(mouse, hud_.getTargetFrame()))
         return;
-    if (current_target != nullptr && CheckCollisionPointRec(mouseScreen, hud_.getPlayerFrame()))
+    if (current_target != nullptr && CheckCollisionPointRec(mouse, hud_.getPlayerFrame()))
     {
         current_target = &player_;
         return;
     }
-    if (current_target == nullptr && CheckCollisionPointRec(mouseScreen, hud_.getPlayerFrame()))
+    if (current_target == nullptr && CheckCollisionPointRec(mouse, hud_.getPlayerFrame()))
     {
         current_target = &player_;
         return;
@@ -185,13 +185,6 @@ void Game::tryMove()
     player_.confirmMove(canX, canY);
 }
 
-Vector2 Game::getVirtualMousePos()
-{
-    Vector2 mouse = GetMousePosition();
-    float scaleX = (float)VIRTUAL_WIDTH / GetScreenWidth();
-    float scaleY = (float)VIRTUAL_HEIGHT / GetScreenHeight();
-    return {mouse.x * scaleX, mouse.y * scaleY};
-}
 
 void Game::updateEnemies()
 {
@@ -286,19 +279,19 @@ void Game::handleEscapeKey()
 
 void Game::handleMenuClick()
 {
-    if (CheckCollisionPointRec(mouseScreen, hud_.getBtnEditModeBounds()))
+    if (CheckCollisionPointRec(mouse, hud_.getBtnEditModeBounds()))
     {
         drawn_menu = false;
         in_edit_mode = true;
         std::cout << "clicked on edit mode" << std::endl;
         return;
     }
-    if (CheckCollisionPointRec(mouseScreen, save_btn_.bounds))
+    if (CheckCollisionPointRec(mouse, save_btn_.bounds))
     {
         endEditMode(true);
         return;
     }
-    else if (CheckCollisionPointRec(mouseScreen, discard_btn_.bounds))
+    else if (CheckCollisionPointRec(mouse, discard_btn_.bounds))
     {
         endEditMode(false);
         return;
@@ -314,7 +307,7 @@ void Game::cachePositions()
 
 void Game::updateEditMode()
 {
-    hud_.update(mouseScreen);
+    hud_.update();
 }
 
 void Game::drawEditMode()
@@ -323,11 +316,17 @@ void Game::drawEditMode()
     DrawRectangleRec(edit_mode_window, COLOR_WINDOW_BG);
 
     // buttons: Discard Changes & Save
-    DrawRectangleRec(centerRectInRect(edit_mode_window, VIRTUAL_HEIGHT / 1.5, VIRTUAL_HEIGHT / 3), COLOR_WINDOW_BG);
+    Rectangle centerRec = centerRectInRect(edit_mode_window, VIRTUAL_HEIGHT / 1.5, VIRTUAL_HEIGHT / 3);
+    DrawRectangleRec(centerRec, COLOR_WINDOW_BG);
     save_btn_ = {centerRectInRect(edit_mode_window, edit_mode_window.width / 4, edit_mode_window.height / 4), "Save"};
     
-    // discard_btn_ =
+    discard_btn_ = save_btn_;
+    discard_btn_.label = "Discard";
+    // TODO FIX DISCARD, NOT WORKING RN!!
+    save_btn_.setBounds({save_btn_.bounds.x - save_btn_.bounds.width, save_btn_.bounds.y});
+    discard_btn_.setBounds({save_btn_.bounds.x + save_btn_.bounds.width*2  , save_btn_.bounds.y});
     hud_.drawButton(save_btn_, FONT_SIZE, BLACK, WHITE);
+    hud_.drawButton(discard_btn_, FONT_SIZE, BLACK, WHITE);
 
     DrawRectangleLinesEx(hud_.getPlayerFrame(), 2.0f, COLOR_EDITABLE_COMPONENT);
     DrawRectangleLinesEx(hud_.getTargetFrame(), 2.0f, COLOR_EDITABLE_COMPONENT);

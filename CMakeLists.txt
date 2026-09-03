@@ -28,9 +28,6 @@ add_executable(game_exe
     source/main.cpp
     source/Game.cpp
     
-    collision/Collision.cpp
-    settings/Settings.cpp
-
     components/input/InputManager.cpp
     components/entity/Entity.cpp
     components/entity/Player.cpp
@@ -43,9 +40,12 @@ add_executable(game_exe
     ui/Window.cpp
     ui/HUD.cpp
     ui/ActionBar.cpp
+
+    utils/Collision.cpp
+    utils/Settings.cpp
 )
 
-target_include_directories(game_exe PRIVATE include ui/include)
+target_include_directories(game_exe PRIVATE include ui/include utils/include)
 target_compile_features(game_exe PRIVATE cxx_std_17)
 target_link_libraries(game_exe PRIVATE raylib nlohmann_json::nlohmann_json)
 set_property(TARGET game_exe PROPERTY OUTPUT_NAME game)
