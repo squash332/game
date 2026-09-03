@@ -36,8 +36,8 @@ public:
 
     void update();
     
-    void setPlayerFrame(Rectangle frame);
-    void setTargetFrame(Rectangle frame);
+    void setPlayerFramePos(Rectangle pos);
+    void setTargetFramePos(Rectangle pos);
     // void setFocusFrame(Rectangle newPos);
     
     Rectangle getPlayerFrame() const;

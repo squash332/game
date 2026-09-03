@@ -100,14 +100,16 @@ void HUD::update()
     handleDrag();
 }
 
-void HUD::setPlayerFrame(Rectangle frame)
+void HUD::setPlayerFramePos(Rectangle pos)
 {  
-   player_frame_ = frame; 
+   player_frame_.x = pos.x;
+   player_frame_.y = pos.y; 
 }
 
-void HUD::setTargetFrame(Rectangle frame)
+void HUD::setTargetFramePos(Rectangle pos)
 {
-    targeted_frame_ = frame;
+    targeted_frame_.x = pos.x;
+    targeted_frame_.y = pos.y;
 }
 
 Rectangle HUD::getPlayerFrame() const

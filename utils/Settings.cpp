@@ -23,6 +23,7 @@ void saveSettings(const Settings &settings, const std::string &path)
     json j;
     j["player_frame_config"] = settings.player_frame_config;
     j["target_frame_config"] = settings.targeted_frame_config;
+    j["action_bar_config"] = settings.action_bar_config;
 
     std::ofstream file(path);
     file << j.dump(4);
@@ -39,6 +40,8 @@ Settings loadSettings(const std::string &path)
     json j = json::parse(file);
     settings.player_frame_config = j["player_frame_config"].get<Rectangle>();
     settings.targeted_frame_config = j["target_frame_config"].get<Rectangle>();
+    if (j.contains("action_bar_config"))
+        settings.action_bar_config = j["action_bar_config"].get<Rectangle>();
 
     return settings;
 }

@@ -74,6 +74,7 @@ private:
   Rectangle cached_player_frame_;
   Rectangle cached_target_frame_;
   Rectangle cached_focus_frame_;
+  Rectangle cached_action_bar_;
 
   Button save_btn_;
   Button discard_btn_;

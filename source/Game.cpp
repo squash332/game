@@ -15,7 +15,8 @@ Game::Game()
       cached_target_frame_{0},
       cached_focus_frame_{0},
       save_btn_{0},
-      discard_btn_{0}
+      discard_btn_{0},
+      cached_action_bar_{0}
 {
     enemies_.push_back(std::make_unique<Enemy>("knight"));
 
@@ -31,7 +32,7 @@ Game::Game()
                     { player_.addDirection(Direction::Right); });
     input_.bindPressed(KEY_T, [this]
                        { toggleDebugMode(); });
-    input_.bindPressed(KEY_Q, [this]
+    input_.bindPressed(KEY_ONE, [this]
                        { tryAttack(); });
     input_.bindPressed(KEY_ESCAPE, [this]
                        { handleEscapeKey(); });
@@ -64,9 +65,9 @@ void Game::run()
         cam_.update(player_.getX(), player_.getY(), delta_time);
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
-            if (!in_edit_mode)
+            if (!in_edit_mode) 
                 handleTargetClick();
-            
+
             handleMenuClick();
         }
 
@@ -86,12 +87,12 @@ void Game::run()
         cam_.endFrame();
         // end camera
 
+        action_bar_.draw(player_);
         hud_.drawPlayerFrame(player_);
         if (current_target != nullptr) hud_.drawTargetedFrame(*current_target);
         if (drawn_menu) hud_.drawSettingsWindow();
         if (in_edit_mode) drawEditMode();
 
-        action_bar_.draw(player_);
 
         displayLogs();
         game_window_.endFrame();
@@ -261,6 +262,7 @@ void Game::handleDebugMode()
     }
 }
 
+// function called in lambda on pressing ESC key button
 void Game::handleEscapeKey()
 {
     // first remove current target, then on another 'ESC' click open the settings menu
@@ -276,18 +278,24 @@ void Game::handleEscapeKey()
 
 void Game::handleMenuClick()
 {
+    // if edit mode button clicked, hide menu, cache current positions and return
     if (CheckCollisionPointRec(mouse, hud_.getBtnEditModeBounds()))
     {
         drawn_menu = false;
         cachePositions();
         std::cout << "clicked on edit mode" << std::endl;
+        return;
     }
+
+    // if not in edit mode, don't even check for button clicks
+    if (!in_edit_mode) return; 
+
     if (CheckCollisionPointRec(mouse, save_btn_.bounds))
     {
         endEditMode(true);
         return;
     }
-    else if(CheckCollisionPointRec(mouse, discard_btn_.bounds))
+    if (CheckCollisionPointRec(mouse, discard_btn_.bounds))
     {
         endEditMode(false);
         std::cout << "end edit mode false called" << std::endl;
@@ -302,6 +310,7 @@ void Game::cachePositions()
     in_edit_mode = true;
     cached_player_frame_ = hud_.getPlayerFrame();
     cached_target_frame_ = hud_.getTargetFrame();
+    cached_action_bar_ = action_bar_.getActionBar();
     std::cout << "cached!!" << std::endl;
 }
 
@@ -309,6 +318,7 @@ void Game::cachePositions()
 void Game::updateEditMode()
 {
     hud_.update();
+    action_bar_.update();
 }
 
 void Game::drawEditMode()
@@ -343,10 +353,11 @@ void Game::endEditMode(bool save)
         Settings settings;
         settings.player_frame_config = hud_.getPlayerFrame();
         settings.targeted_frame_config = hud_.getTargetFrame();
+        settings.action_bar_config = action_bar_.getActionBar();
         saveSettings(settings, SETTINGS_PATH);
         return;
     }
-    hud_.setPlayerFrame(cached_player_frame_);
-    hud_.setTargetFrame(cached_target_frame_);
-
+    hud_.setPlayerFramePos(cached_player_frame_);
+    hud_.setTargetFramePos(cached_target_frame_);
+    action_bar_.setActionBarPos(cached_action_bar_);
 }

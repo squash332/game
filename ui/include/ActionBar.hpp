@@ -4,6 +4,7 @@
 #include "DragDropManager.hpp"
 #include "Player.hpp"
 #include "Mouse.hpp"
+#include "Settings.hpp"
 
 #include "raylib.h"
 
@@ -19,6 +20,7 @@ public:
     ~ActionBar() = default;
 
     Rectangle getActionBar() const;
+    void setActionBarPos(Rectangle pos);
 
 private:
     Rectangle action_bar_;
