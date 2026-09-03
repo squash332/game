@@ -54,7 +54,6 @@ void Game::run()
 
         if (in_edit_mode)
         {
-            cachePositions();
             updateEditMode();
         }
         
@@ -88,12 +87,10 @@ void Game::run()
         // end camera
 
         hud_.drawPlayerFrame(player_);
-        if (current_target != nullptr)
-            hud_.drawTargetedFrame(*current_target);
-        if (drawn_menu)
-            hud_.drawSettingsWindow();
-        if (in_edit_mode)
-            drawEditMode();
+        if (current_target != nullptr) hud_.drawTargetedFrame(*current_target);
+        if (drawn_menu) hud_.drawSettingsWindow();
+        if (in_edit_mode) drawEditMode();
+
         action_bar_.draw(player_);
 
         displayLogs();
@@ -282,28 +279,32 @@ void Game::handleMenuClick()
     if (CheckCollisionPointRec(mouse, hud_.getBtnEditModeBounds()))
     {
         drawn_menu = false;
-        in_edit_mode = true;
+        cachePositions();
         std::cout << "clicked on edit mode" << std::endl;
-        return;
     }
     if (CheckCollisionPointRec(mouse, save_btn_.bounds))
     {
         endEditMode(true);
         return;
     }
-    else if (CheckCollisionPointRec(mouse, discard_btn_.bounds))
+    else if(CheckCollisionPointRec(mouse, discard_btn_.bounds))
     {
         endEditMode(false);
+        std::cout << "end edit mode false called" << std::endl;
         return;
     }
 }
 
 void Game::cachePositions()
 {
-    // cache positions?
+    if (in_edit_mode) return; // cache only once entering edit mode, then stop caching
+
+    in_edit_mode = true;
     cached_player_frame_ = hud_.getPlayerFrame();
     cached_target_frame_ = hud_.getTargetFrame();
+    std::cout << "cached!!" << std::endl;
 }
+
 
 void Game::updateEditMode()
 {
@@ -330,6 +331,7 @@ void Game::drawEditMode()
 
     DrawRectangleLinesEx(hud_.getPlayerFrame(), 2.0f, COLOR_EDITABLE_COMPONENT);
     DrawRectangleLinesEx(hud_.getTargetFrame(), 2.0f, COLOR_EDITABLE_COMPONENT);
+    DrawRectangleLinesEx(action_bar_.getActionBar(), 2.0f, COLOR_EDITABLE_COMPONENT);
 }
 
 void Game::endEditMode(bool save)
@@ -342,10 +344,9 @@ void Game::endEditMode(bool save)
         settings.player_frame_config = hud_.getPlayerFrame();
         settings.targeted_frame_config = hud_.getTargetFrame();
         saveSettings(settings, SETTINGS_PATH);
+        return;
     }
-    else
-    {
-        hud_.setPlayerFrame(cached_player_frame_);
-        hud_.setTargetFrame(cached_target_frame_);
-    }
+    hud_.setPlayerFrame(cached_player_frame_);
+    hud_.setTargetFrame(cached_target_frame_);
+
 }
