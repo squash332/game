@@ -29,5 +29,4 @@ private:
     int cols_;
     float slotSize_;
     float iconPadding_;
-    DragState drag_state_;
 };

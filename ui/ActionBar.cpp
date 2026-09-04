@@ -1,6 +1,6 @@
 #include "ActionBar.hpp"
 
-ActionBar::ActionBar() : rows_(1), cols_(2), slotSize_(ABILITY_ICON_SIZE), iconPadding_(5), drag_state_{0}
+ActionBar::ActionBar() : rows_(1), cols_(2), slotSize_(ABILITY_ICON_SIZE), iconPadding_(5)
 {
     Settings settings = loadSettings(SETTINGS_PATH);
     if (settings.action_bar_config.width == 0 && settings.action_bar_config.height == 0)
@@ -53,7 +53,7 @@ void ActionBar::handleDrag()
 {
     if (!drag_state_.active)
         return;
-
+        
     drag_state_.update();
 
     Rectangle *bar = static_cast<Rectangle *>(drag_state_.dragged_item);

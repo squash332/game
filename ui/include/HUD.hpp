@@ -50,7 +50,6 @@ private:
     Rectangle player_frame_;
     Rectangle targeted_frame_;
     Rectangle focus_frame_;
-    DragState drag_state_;
     Rectangle settings_window_;
     Button edit_mode_button_;
     void handleComponentClick();

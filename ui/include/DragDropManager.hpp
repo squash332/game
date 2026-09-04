@@ -36,3 +36,5 @@ struct DragState
 
     }
 };
+
+inline DragState drag_state_;
