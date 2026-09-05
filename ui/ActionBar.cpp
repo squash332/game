@@ -5,8 +5,8 @@ ActionBar::ActionBar() : rows_(1), cols_(2), slotSize_(ABILITY_ICON_SIZE), iconP
     Settings settings = loadSettings(SETTINGS_PATH);
     if (settings.action_bar_config.width == 0 && settings.action_bar_config.height == 0)
     {
-        float totalWidth = cols_ * (slotSize_ + iconPadding_) - iconPadding_;
-        float totalHeight = rows_ * (slotSize_ + iconPadding_);
+        float totalWidth = cols_ * slotSize_ + (cols_ + 1) * iconPadding_;
+        float totalHeight = rows_ * slotSize_ + (rows_ + 1) * iconPadding_;
         action_bar_ = {
             (VIRTUAL_WIDTH - totalWidth) / 2.0f,
             VIRTUAL_HEIGHT - totalHeight,
@@ -31,8 +31,8 @@ void ActionBar::draw(const Player &player)
         int col = i % cols_;
 
         Vector2 slotPos = {
-            action_bar_.x + iconPadding_ + col * (slotSize_ + iconPadding_ / 2),
-            action_bar_.y + iconPadding_ + row * (slotSize_ + iconPadding_ / 2)};
+            action_bar_.x + iconPadding_ + col * (slotSize_ + iconPadding_),
+            action_bar_.y + iconPadding_ + row * (slotSize_ + iconPadding_)};
 
         DrawTextureV(abilities[i].icon, slotPos, WHITE);
     }
@@ -53,7 +53,7 @@ void ActionBar::handleDrag()
 {
     if (!drag_state_.active)
         return;
-        
+
     drag_state_.update();
 
     Rectangle *bar = static_cast<Rectangle *>(drag_state_.dragged_item);

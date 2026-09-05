@@ -217,11 +217,6 @@ void Game::tryAttack()
     {
         return;
     }
-    if (!player_.isInMeleeRange() && current_target != nullptr)
-    {
-        std::cout << "You are out of range." << std::endl;
-        return;
-    }
     if (current_target == nullptr)
     {
         std::cout << "You don't have a target." << std::endl;
@@ -230,6 +225,11 @@ void Game::tryAttack()
     if (current_target->is_ally_ == true)
     {
         std::cout << "Current target is not hostile." << std::endl;
+        return;
+    }
+    if (!player_.isInMeleeRange() && current_target != nullptr)
+    {
+        std::cout << "You are out of range." << std::endl;
         return;
     }
 

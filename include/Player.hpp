@@ -2,16 +2,9 @@
 
 #include "Entity.hpp"
 #include "Animation.hpp"
+#include "Ability.hpp"
 
 #define ABILITY_ICON_SIZE_VECTOR {32, 32}
-
-struct Ability
-{
-    int id;
-    Texture2D icon;
-    Vector2 position;
-    std::string name;
-};
 
 enum class PlayerClass
 {

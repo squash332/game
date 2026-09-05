@@ -5,6 +5,7 @@
 #include "Player.hpp"
 #include "Mouse.hpp"
 #include "Settings.hpp"
+#include "Ability.hpp"
 
 #include "raylib.h"
 

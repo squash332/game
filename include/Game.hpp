@@ -18,6 +18,7 @@
 #include "ActionBar.hpp"
 #include "PositioningUtilites.hpp"
 #include "Mouse.hpp"
+#include "Ability.hpp"
 
 enum class GameState
 {

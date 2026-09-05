@@ -43,6 +43,7 @@ add_executable(game_exe
 
     utils/Collision.cpp
     utils/Settings.cpp
+    utils/Ability.cpp
 )
 
 target_include_directories(game_exe PRIVATE include ui/include utils/include)
