@@ -16,7 +16,7 @@ Renderer::~Renderer()
 void Renderer::drawPlayer(const Player &player)
 {
     AnimationData anim = getAnimData(player.getAnimState());
-    int wrappedFrame;
+    int wrappedFrame = 0;
     if (player.isAttacking())
     {
         wrappedFrame = (player.frame_number_ - player.getAttackStartFrame()) % anim.frameCount;

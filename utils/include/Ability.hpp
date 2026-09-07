@@ -5,6 +5,8 @@
 #include <memory>
 #include <vector>
 
+#include "Constants.hpp"
+
 struct Keybind {
     int key = KEY_NULL;
     bool shift = false;
@@ -15,9 +17,9 @@ struct Keybind {
 struct Ability
 {
     int id;
-    Texture2D icon;
-    Vector2 iconSize;
     std::string name;
+    Texture2D icon;
+    Vector2 iconSize = ABILITY_ICON_SIZE_VECTOR;
     std::string description;
     int damage = 0;
     float cooldown = 0.0f;

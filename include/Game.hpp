@@ -44,12 +44,13 @@ public:
   void tryMove();
   void updateEnemies();
   void updateTargetRange();
-  void tryAttack();
+  bool canAttack();
+  void handleAbilityCast();
 
   void handleDebugMode(); // open with 'T' keybind
   void handleEscapeKey();
 
-  // HUD relevant 
+  // HUD relevant
   void handleMenuClick();
   bool drawn_menu;
   bool in_edit_mode;
@@ -57,7 +58,6 @@ public:
   void updateEditMode();
   void drawEditMode();
   void endEditMode(bool save);
-
 
   Entity *current_target = nullptr;
   Entity *focus_target = nullptr;

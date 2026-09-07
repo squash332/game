@@ -108,7 +108,7 @@ void Player::attack(Direction dir)
     attack_timer_ = 0.0f;
     attack_start_frame_ = frame_number_;
     direction_ = dir;
-    
+
     switch (dir)
     {
     case Direction::Up:
@@ -134,12 +134,31 @@ std::vector<Ability> Player::loadAbilitiesForClass(PlayerClass playerClass)
     switch (playerClass)
     {
     case PlayerClass::Warrior:
-        return {{1, LoadTexture("res/slash.png"), ABILITY_ICON_SIZE_VECTOR, "Slash"}, {2, LoadTexture("res/clap.png"), ABILITY_ICON_SIZE_VECTOR, "Clap"}};
+        return {
+            Ability{
+                .id = 1,
+                .name = "Slash",
+                .icon = LoadTexture("res/slash.png"),
+                .description = "A quick melee attack that deals damage.",
+                .damage = 20,
+                .cooldown = 3.0f,
+                .keybinding = {KEY_ONE}
+
+            },
+            Ability{
+                .id = 2,
+                .name = "Clap",
+                .icon = LoadTexture("res/clap.png"),
+                .description = "An AoE attack that deals damage to multiple enemies.",
+                .damage = 10,
+                .cooldown = 5.0f,
+                .keybinding = {KEY_TWO}}};
     }
     return {};
 }
 
-std::vector<Ability> Player::getAbilities() const
+
+const std::vector<Ability>& Player::getAbilities() const
 {
     return abilities_;
 }

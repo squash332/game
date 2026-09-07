@@ -4,8 +4,6 @@
 #include "Animation.hpp"
 #include "Ability.hpp"
 
-#define ABILITY_ICON_SIZE_VECTOR {32, 32}
-
 enum class PlayerClass
 {
     Warrior,
@@ -28,7 +26,7 @@ public:
 
     void attack(Direction dir);
     std::vector<Ability> loadAbilitiesForClass(PlayerClass playerClass);
-    std::vector<Ability> getAbilities() const;
+    const std::vector<Ability>& getAbilities() const;
     int frame_number_ = 0;
 
 private:

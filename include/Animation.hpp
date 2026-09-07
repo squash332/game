@@ -25,6 +25,7 @@ enum class AnimationState
     SlashLeft,
     SlashRight,
     SlashDown
+
 };
 
 inline AnimationData getAnimData(AnimationState state)

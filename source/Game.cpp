@@ -32,8 +32,6 @@ Game::Game()
                     { player_.addDirection(Direction::Right); });
     input_.bindPressed(KEY_T, [this]
                        { toggleDebugMode(); });
-    input_.bindPressed(KEY_ONE, [this]
-                       { tryAttack(); });
     input_.bindPressed(KEY_ESCAPE, [this]
                        { handleEscapeKey(); });
 }
@@ -57,15 +55,16 @@ void Game::run()
         {
             updateEditMode();
         }
-        
+
         input_.update();
         player_.update(delta_time, frame);
         tryMove();
+        handleAbilityCast();
 
         cam_.update(player_.getX(), player_.getY(), delta_time);
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
-            if (!in_edit_mode) 
+            if (!in_edit_mode)
                 handleTargetClick();
 
             handleMenuClick();
@@ -89,10 +88,12 @@ void Game::run()
 
         action_bar_.draw(player_);
         hud_.drawPlayerFrame(player_);
-        if (current_target != nullptr) hud_.drawTargetedFrame(*current_target);
-        if (drawn_menu) hud_.drawSettingsWindow();
-        if (in_edit_mode) drawEditMode();
-
+        if (current_target != nullptr)
+            hud_.drawTargetedFrame(*current_target);
+        if (drawn_menu)
+            hud_.drawSettingsWindow();
+        if (in_edit_mode)
+            drawEditMode();
 
         displayLogs();
         game_window_.endFrame();
@@ -183,7 +184,6 @@ void Game::tryMove()
     player_.confirmMove(canX, canY);
 }
 
-
 void Game::updateEnemies()
 {
     for (auto &enemy : enemies_)
@@ -210,38 +210,53 @@ void Game::updateTargetRange()
     player_.setMeleeRange(in_range);
 }
 
-void Game::tryAttack()
+void Game::handleAbilityCast()
+{
+    if (canAttack())
+    {
+        for (const auto &ability : player_.getAbilities()) {
+            if (IsKeyPressed(ability.keybinding.key)) {
+                // compare the melee circles and turn the player towards his target when attacking and retain this position
+                MeleeRangeCircle player_circle = player_.getMeleeHitbox();
+                MeleeRangeCircle target_circle = current_target->getMeleeHitbox();
+                Direction facing_towards_enemy = getDirectionToTarget(player_circle.center.x, player_circle.center.y, target_circle.center.x, target_circle.center.y);
+        
+                player_.attack(facing_towards_enemy);
+
+                
+                // TODO: make the abilities a struct and then extract the damage, cost, cooldown etc based on need (here damage which is being dealt)
+                current_target->takeDamage(ability.damage);
+
+                return;
+            }
+        }
+    }
+}
+
+bool Game::canAttack()
 {
     // without this, spamming the ability fast removes the target's hp even though player attacked once
     if (player_.isAttacking())
     {
-        return;
+        return false;
     }
     if (current_target == nullptr)
     {
         std::cout << "You don't have a target." << std::endl;
-        return;
+        return false;
     }
     if (current_target->is_ally_ == true)
     {
         std::cout << "Current target is not hostile." << std::endl;
-        return;
+        return false;
     }
     if (!player_.isInMeleeRange() && current_target != nullptr)
     {
         std::cout << "You are out of range." << std::endl;
-        return;
+        return false;
     }
 
-    // compare the melee circles and turn the player towards his target when attacking and retain this position
-    MeleeRangeCircle player_circle = player_.getMeleeHitbox();
-    MeleeRangeCircle target_circle = current_target->getMeleeHitbox();
-    Direction facing_towards_enemy = getDirectionToTarget(player_circle.center.x, player_circle.center.y, target_circle.center.x, target_circle.center.y);
-
-    player_.attack(facing_towards_enemy);
-
-    // TODO: make the abilities a struct and then extract the damage, cost, cooldown etc based on need (here damage which is being dealt)
-    current_target->takeDamage(20);
+    return true;
 }
 
 void Game::handleDebugMode()
@@ -288,7 +303,8 @@ void Game::handleMenuClick()
     }
 
     // if not in edit mode, don't even check for button clicks
-    if (!in_edit_mode) return; 
+    if (!in_edit_mode)
+        return;
 
     if (CheckCollisionPointRec(mouse, save_btn_.bounds))
     {
@@ -305,7 +321,8 @@ void Game::handleMenuClick()
 
 void Game::cachePositions()
 {
-    if (in_edit_mode) return; // cache only once entering edit mode, then stop caching
+    if (in_edit_mode)
+        return; // cache only once entering edit mode, then stop caching
 
     in_edit_mode = true;
     cached_player_frame_ = hud_.getPlayerFrame();
@@ -313,7 +330,6 @@ void Game::cachePositions()
     cached_action_bar_ = action_bar_.getActionBar();
     std::cout << "cached!!" << std::endl;
 }
-
 
 void Game::updateEditMode()
 {
@@ -330,12 +346,12 @@ void Game::drawEditMode()
     Rectangle centerRec = centerRectInRect(edit_mode_window, VIRTUAL_HEIGHT / 1.5, VIRTUAL_HEIGHT / 3);
     DrawRectangleRec(centerRec, COLOR_WINDOW_BG);
     save_btn_ = {centerRectInRect(edit_mode_window, edit_mode_window.width / 4, edit_mode_window.height / 4), "Save"};
-    
+
     discard_btn_ = save_btn_;
     discard_btn_.label = "Discard";
     // TODO FIX DISCARD, NOT WORKING RN!!
     save_btn_.setBounds({save_btn_.bounds.x - save_btn_.bounds.width, save_btn_.bounds.y});
-    discard_btn_.setBounds({save_btn_.bounds.x + save_btn_.bounds.width*2  , save_btn_.bounds.y});
+    discard_btn_.setBounds({save_btn_.bounds.x + save_btn_.bounds.width * 2, save_btn_.bounds.y});
     hud_.drawButton(save_btn_, FONT_SIZE, BLACK, WHITE);
     hud_.drawButton(discard_btn_, FONT_SIZE, BLACK, WHITE);
 

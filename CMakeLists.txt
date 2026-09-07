@@ -47,6 +47,6 @@ add_executable(game_exe
 )
 
 target_include_directories(game_exe PRIVATE include ui/include utils/include)
-target_compile_features(game_exe PRIVATE cxx_std_17)
+target_compile_features(game_exe PRIVATE cxx_std_20)
 target_link_libraries(game_exe PRIVATE raylib nlohmann_json::nlohmann_json)
 set_property(TARGET game_exe PROPERTY OUTPUT_NAME game)

@@ -13,7 +13,8 @@ ActionBar::ActionBar() : rows_(1), cols_(2), slotSize_(ABILITY_ICON_SIZE), iconP
             totalWidth,
             totalHeight};
     }
-    else {
+    else
+    {
         action_bar_ = settings.action_bar_config;
     }
     std::cout << "action bar constructed" << std::endl;
@@ -27,14 +28,9 @@ void ActionBar::draw(const Player &player)
 
     for (size_t i = 0; i < abilities.size(); i++)
     {
-        int row = i / cols_;
-        int col = i % cols_;
+        Rectangle slot = getSlotBounds(i);
 
-        Vector2 slotPos = {
-            action_bar_.x + iconPadding_ + col * (slotSize_ + iconPadding_),
-            action_bar_.y + iconPadding_ + row * (slotSize_ + iconPadding_)};
-
-        DrawTextureV(abilities[i].icon, slotPos, WHITE);
+        DrawTextureV(abilities[i].icon, {floorf(slot.x), floorf(slot.y)}, WHITE);
     }
 }
 
@@ -80,4 +76,27 @@ void ActionBar::setActionBarPos(Rectangle pos)
 {
     action_bar_.x = pos.x;
     action_bar_.y = pos.y;
+}
+
+int ActionBar::getActionBarCols() const
+{
+    return cols_;
+}
+
+Rectangle ActionBar::getSlotBounds(int i) const
+{
+    int row = i / cols_;
+    int col = i % cols_;
+
+    return {
+        action_bar_.x + iconPadding_ + col * (slotSize_ + iconPadding_),
+        action_bar_.y + iconPadding_ + row * (slotSize_ + iconPadding_),
+        slotSize_,
+        slotSize_
+    };
+}
+
+int ActionBar::getActionBarRows() const
+{
+    return rows_;
 }

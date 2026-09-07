@@ -33,6 +33,7 @@ constexpr int ENEMY_SPRITE_HEIGHT = 32;
 
 // ABILITY icons
 #define ABILITY_ICON_SIZE 36.0f
+#define ABILITY_ICON_SIZE_VECTOR {32, 32}
 
 // PATHS
 const std::string SETTINGS_PATH = "ui_settings.json";

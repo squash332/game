@@ -23,6 +23,13 @@ public:
     Rectangle getActionBar() const;
     void setActionBarPos(Rectangle pos);
 
+    void setActionBarRows(int numOfRows);
+    void setActionBarCols(int numOfCols);
+
+    int getActionBarRows() const;
+    int getActionBarCols() const;
+
+    Rectangle getSlotBounds(int index) const;
 private:
     Rectangle action_bar_;
     Vector2 position_;
@@ -30,4 +37,5 @@ private:
     int cols_;
     float slotSize_;
     float iconPadding_;
+    std::vector <Ability> abilities_;
 };
