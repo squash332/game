@@ -22,7 +22,7 @@ public:
 
     Rectangle getActionBar() const;
     void setActionBarPos(Rectangle pos);
-    int getHoveredSlot(size_t abilityCount) const
+    int getHoveredSlot(size_t abilityCount) const;
 
     void setActionBarRows(int numOfRows);
     void setActionBarCols(int numOfCols);

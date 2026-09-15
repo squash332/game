@@ -7,6 +7,8 @@
 
 #include "Constants.hpp"
 
+enum class AbilityAnim { Slash, Clap };
+
 struct Keybind {
     int key = KEY_NULL;
     bool shift = false;
@@ -24,7 +26,7 @@ struct Ability
     int damage = 0;
     float cooldown = 0.0f;
     Keybind keybinding;
-    
+    AbilityAnim animType = AbilityAnim::Slash;
 };
 
 inline std::string keyToString(int key)

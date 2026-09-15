@@ -5,7 +5,7 @@ Window::Window()
   InitWindow(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, "Da Game");
   SetExitKey(KEY_NULL); // stop closing app on pressing esc key
   SetTargetFPS(144);
-  toggleFullscreen();
+  // toggleFullscreen();
   target_ = LoadRenderTexture(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 }
 

@@ -22,9 +22,14 @@ enum class AnimationState
     WalkRight,
 
     SlashUp,
+    SlashDown,
     SlashLeft,
     SlashRight,
-    SlashDown
+
+    ClapUp,
+    ClapDown,
+    ClapLeft,
+    ClapRight
 
 };
 
@@ -56,6 +61,8 @@ inline AnimationData getAnimData(AnimationState state)
         return {10, NR_OF_FRAMES_ATTACKING};
     case AnimationState::SlashUp:
         return {11, NR_OF_FRAMES_ATTACKING};
+    case AnimationState::ClapRight:
+        return {12, NR_OF_FRAMES_ATTACKING};
     }
 
     return {0, 1};

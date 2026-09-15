@@ -16,6 +16,7 @@ Renderer::~Renderer()
 void Renderer::drawPlayer(const Player &player)
 {
     AnimationData anim = getAnimData(player.getAnimState());
+
     int wrappedFrame = 0;
     if (player.isAttacking())
     {

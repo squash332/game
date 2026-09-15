@@ -24,7 +24,8 @@ public:
     bool isAttacking() const { return is_attacking_; }
     int getAttackStartFrame() const { return attack_start_frame_; }
 
-    void attack(Direction dir);
+    void attack(Direction dir, AbilityAnim animType);
+    AnimationState getAttackAnimState(Direction dir, AbilityAnim animType);
     std::vector<Ability> loadAbilitiesForClass(PlayerClass playerClass);
     const std::vector<Ability>& getAbilities() const;
     int frame_number_ = 0;

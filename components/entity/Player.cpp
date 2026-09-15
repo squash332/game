@@ -103,7 +103,7 @@ void Player::update(float delta, int frame)
     direction_ = Direction::None;
 }
 
-void Player::attack(Direction dir)
+void Player::attack(Direction dir, AbilityAnim animType)
 {
     if (is_attacking_)
         return;
@@ -112,24 +112,31 @@ void Player::attack(Direction dir)
     attack_start_frame_ = frame_number_;
     setDirection(dir);
 
-    switch (dir)
+    anim_state_ = getAttackAnimState(dir, animType);
+}
+
+AnimationState Player::getAttackAnimState(Direction dir, AbilityAnim animType)
+{
+    switch (animType)
     {
-    case Direction::Up:
-        anim_state_ = AnimationState::SlashUp;
-        break;
-    case Direction::Down:
-        anim_state_ = AnimationState::SlashDown;
-        break;
-    case Direction::Left:
-        anim_state_ = AnimationState::SlashLeft;
-        break;
-    case Direction::Right:
-        anim_state_ = AnimationState::SlashRight;
-        break;
-    default:
-        anim_state_ = AnimationState::SlashRight;
-        break;
+        case AbilityAnim::Slash:
+            switch (dir)
+            {
+                case Direction::Up:    return AnimationState::SlashUp;
+                case Direction::Down:  return AnimationState::SlashDown;
+                case Direction::Left:  return AnimationState::SlashLeft;
+                default:                return AnimationState::SlashRight;
+            }
+        case AbilityAnim::Clap:
+            switch (dir)
+            {
+                case Direction::Up:    return AnimationState::ClapUp;
+                case Direction::Down:  return AnimationState::ClapDown;
+                case Direction::Left:  return AnimationState::ClapLeft;
+                default:                return AnimationState::ClapRight;
+            }
     }
+    return AnimationState::SlashRight;
 }
 
 std::vector<Ability> Player::loadAbilitiesForClass(PlayerClass playerClass)
@@ -145,7 +152,8 @@ std::vector<Ability> Player::loadAbilitiesForClass(PlayerClass playerClass)
                 .description = "A quick melee attack that deals damage.",
                 .damage = 20,
                 .cooldown = 3.0f,
-                .keybinding = {KEY_ONE}
+                .keybinding = {KEY_ONE},
+                .animType = AbilityAnim::Slash
 
             },
             Ability{
@@ -155,7 +163,11 @@ std::vector<Ability> Player::loadAbilitiesForClass(PlayerClass playerClass)
                 .description = "An AoE attack that deals damage to multiple enemies.",
                 .damage = 10,
                 .cooldown = 5.0f,
-                .keybinding = {KEY_TWO}}};
+                .keybinding = {KEY_TWO},
+                .animType = AbilityAnim::Clap
+            }
+            };
+            
     }
     return {};
 }

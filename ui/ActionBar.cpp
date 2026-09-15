@@ -94,7 +94,7 @@ int ActionBar::getHoveredSlot(size_t abilityCount) const
 {
     for (size_t i = 0; i < abilityCount; i++)
     {
-        if (CheckCollisionPointRec(g_mouse, getSlotBounds(i)))
+        if (CheckCollisionPointRec(mouse, getSlotBounds(i)))
             return (int)i;
     }
     return -1;

@@ -247,7 +247,8 @@ void Game::handleAbilityCast(const Ability &ability)
     MeleeRangeCircle target_circle = current_target->getMeleeHitbox();
     Direction facing = getDirectionToTarget(player_circle.center.x, player_circle.center.y, target_circle.center.x, target_circle.center.y);
 
-    player_.attack(facing);
+
+    player_.attack(facing, ability.animType);
     current_target->takeDamage(ability.damage);
 }
 
