@@ -41,41 +41,40 @@ void Player::update(float delta, int frame)
 
     if (direction_ & Direction::Up)
     {
-        if (!is_attacking_) {
+        if (!is_attacking_) 
             anim_state_ = AnimationState::WalkUp;
-            next_y_ -= step;
-        }
+            
+        next_y_ -= step;
         last_direction_ = Direction::Up;
         moved = true;
     }
 
     if (direction_ & Direction::Down)
     {
-        if (!is_attacking_) {
+        if (!is_attacking_) 
             anim_state_ = AnimationState::WalkDown;
-            next_y_ += step;
-        }
+            
+        next_y_ += step;
         last_direction_ = Direction::Down;
         moved = true;
     }
 
     if (direction_ & Direction::Right)
     {
-        if (!is_attacking_) {
+        if (!is_attacking_) 
             anim_state_ = AnimationState::WalkRight;
-            next_x_ += step;
-        }
+            
+        next_x_ += step;
         last_direction_ = Direction::Right;
         moved = true;
     }
 
     if (direction_ & Direction::Left)
     {
-        if (!is_attacking_) {
+        if (!is_attacking_) 
             anim_state_ = AnimationState::WalkLeft;
-            next_x_ -= step;
-        }
-        
+            
+        next_x_ -= step;
         last_direction_ = Direction::Left;
         moved = true;
     }

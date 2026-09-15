@@ -37,15 +37,18 @@ public:
   ~Game() = default;
   void run();
 
+  void handleLeftMouseClick();
   void toggleDebugMode();
   void displayLogs();
   bool debug_mode = false;
+  void handleAbilityClick();
+  void handleAbilityInput();
   void handleTargetClick();
   void tryMove();
   void updateEnemies();
   void updateTargetRange();
   bool canAttack();
-  void handleAbilityCast();
+  void handleAbilityCast(const Ability &ability);
 
   void handleDebugMode(); // open with 'T' keybind
   void handleEscapeKey();

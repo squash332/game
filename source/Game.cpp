@@ -56,19 +56,19 @@ void Game::run()
             updateEditMode();
         }
 
+        // make sure changes are discarded ALSO when player presses ESC
+        if (in_edit_mode && IsKeyPressed(KEY_ESCAPE))
+        {
+            endEditMode(false);
+        }
+
         input_.update();
         player_.update(delta_time, frame);
         tryMove();
-        handleAbilityCast();
+        handleAbilityInput();
 
         cam_.update(player_.getX(), player_.getY(), delta_time);
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-        {
-            if (!in_edit_mode)
-                handleTargetClick();
-
-            handleMenuClick();
-        }
+        handleLeftMouseClick();
 
         // start drawing
         game_window_.beginFrame();
@@ -101,6 +101,20 @@ void Game::run()
     }
 }
 
+void Game::handleLeftMouseClick()
+{
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    {
+        if (!in_edit_mode)
+        {
+            handleTargetClick();
+            handleAbilityClick();
+        }
+
+        handleMenuClick();
+    }
+}
+
 void Game::toggleDebugMode()
 {
     debug_mode = !debug_mode;
@@ -129,6 +143,18 @@ void Game::displayLogs()
     DrawText(std::to_string(playerTileY).c_str(), 110, VIRTUAL_HEIGHT - 60, 15, RED);
 }
 
+void Game::handleAbilityClick()
+{
+    if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        return;
+
+    const auto &abilities = player_.getAbilities();
+
+    int slot = action_bar_.getHoveredSlot(abilities.size());
+
+    if (slot != -1) handleAbilityCast(abilities[slot]);
+}
+
 void Game::handleTargetClick()
 {
     // select nothing is default
@@ -137,6 +163,8 @@ void Game::handleTargetClick()
     // or maybe hide mouse while holding right click just like in wow or maybe untarget just with ESCAPE
 
     // compute mouse position in our game in relation to camera
+    if (in_edit_mode)
+        return;
     Vector2 mouseWorld = GetScreenToWorld2D(mouse, cam_.getCamera());
     // if player clicks on his player frame, nothing happens
     if (current_target != nullptr && CheckCollisionPointRec(mouse, hud_.getTargetFrame()))
@@ -210,25 +238,28 @@ void Game::updateTargetRange()
     player_.setMeleeRange(in_range);
 }
 
-void Game::handleAbilityCast()
+// handles cast for 1 specific ability
+void Game::handleAbilityCast(const Ability &ability)
 {
-    if (canAttack())
+    if (!canAttack()) return;
+
+    MeleeRangeCircle player_circle = player_.getMeleeHitbox();
+    MeleeRangeCircle target_circle = current_target->getMeleeHitbox();
+    Direction facing = getDirectionToTarget(player_circle.center.x, player_circle.center.y, target_circle.center.x, target_circle.center.y);
+
+    player_.attack(facing);
+    current_target->takeDamage(ability.damage);
+}
+
+// delegates cast to handleAbilityCast()
+void Game::handleAbilityInput()
+{
+    for (const auto &ability : player_.getAbilities())
     {
-        for (const auto &ability : player_.getAbilities()) {
-            if (IsKeyPressed(ability.keybinding.key)) {
-                // compare the melee circles and turn the player towards his target when attacking and retain this position
-                MeleeRangeCircle player_circle = player_.getMeleeHitbox();
-                MeleeRangeCircle target_circle = current_target->getMeleeHitbox();
-                Direction facing_towards_enemy = getDirectionToTarget(player_circle.center.x, player_circle.center.y, target_circle.center.x, target_circle.center.y);
-        
-                player_.attack(facing_towards_enemy);
-
-                
-                // TODO: make the abilities a struct and then extract the damage, cost, cooldown etc based on need (here damage which is being dealt)
-                current_target->takeDamage(ability.damage);
-
-                return;
-            }
+        if (IsKeyPressed(ability.keybinding.key))
+        {
+            handleAbilityCast(ability);
+            return;
         }
     }
 }
@@ -314,7 +345,6 @@ void Game::handleMenuClick()
     if (CheckCollisionPointRec(mouse, discard_btn_.bounds))
     {
         endEditMode(false);
-        std::cout << "end edit mode false called" << std::endl;
         return;
     }
 }
@@ -371,9 +401,11 @@ void Game::endEditMode(bool save)
         settings.targeted_frame_config = hud_.getTargetFrame();
         settings.action_bar_config = action_bar_.getActionBar();
         saveSettings(settings, SETTINGS_PATH);
+        std::cout << "saved new settings!" << std::endl;
         return;
     }
     hud_.setPlayerFramePos(cached_player_frame_);
     hud_.setTargetFramePos(cached_target_frame_);
     action_bar_.setActionBarPos(cached_action_bar_);
+    std::cout << "discarding new settings!" << std::endl;
 }

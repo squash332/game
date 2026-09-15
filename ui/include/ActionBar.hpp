@@ -22,6 +22,7 @@ public:
 
     Rectangle getActionBar() const;
     void setActionBarPos(Rectangle pos);
+    int getHoveredSlot(size_t abilityCount) const
 
     void setActionBarRows(int numOfRows);
     void setActionBarCols(int numOfCols);
@@ -33,9 +34,9 @@ public:
 private:
     Rectangle action_bar_;
     Vector2 position_;
+    std::vector<Keybind> slot_keybinds_;
     int rows_;
     int cols_;
     float slotSize_;
     float iconPadding_;
-    std::vector <Ability> abilities_;
 };
