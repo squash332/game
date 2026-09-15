@@ -241,7 +241,9 @@ void Game::updateTargetRange()
 // handles cast for 1 specific ability
 void Game::handleAbilityCast(const Ability &ability)
 {
+    if (ability.cooldown_remaining != 0) return;
     if (!canAttack()) return;
+
 
     MeleeRangeCircle player_circle = player_.getMeleeHitbox();
     MeleeRangeCircle target_circle = current_target->getMeleeHitbox();
@@ -250,6 +252,7 @@ void Game::handleAbilityCast(const Ability &ability)
 
     player_.attack(facing, ability.animType);
     current_target->takeDamage(ability.damage);
+    player_.startCooldown(ability.id);
 }
 
 // delegates cast to handleAbilityCast()

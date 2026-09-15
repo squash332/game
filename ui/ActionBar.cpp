@@ -38,7 +38,24 @@ void ActionBar::draw(const Player &player)
         // draw the ability icon if this slot has one
         if (i < (int)slot_keybinds_.size())
         {
-            DrawTextureV(abilities[i].icon, {floorf(slot.x), floorf(slot.y)}, WHITE);
+            DrawTextureV(abilities[i].icon, {(slot.x), (slot.y)}, WHITE);
+
+            // cooldown overlay
+            if (abilities[i].cooldown_remaining > 0.0f)
+            {
+                float fraction = abilities[i].cooldown_remaining / abilities[i].cooldown; 
+                float overlayHeight = slotSize_ * fraction;
+
+                DrawRectangle(
+                    slot.x,
+                    slot.y + (slotSize_ - overlayHeight),
+                    slotSize_,
+                    overlayHeight,
+                    Fade(BLACK, 0.6f));
+
+                std::string cdText = std::to_string((int)ceilf(abilities[i].cooldown_remaining));
+                DrawText(cdText.c_str(), slot.x + slotSize_ / 2 - 4, slot.y + slotSize_ / 2 - 4, 10, WHITE);
+            }
         }
         // draw the slot's keybind label — always, occupied or not
         std::string keyLabel = keybindToString(slot_keybinds_[i]);

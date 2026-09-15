@@ -25,6 +25,7 @@ public:
     int getAttackStartFrame() const { return attack_start_frame_; }
 
     void attack(Direction dir, AbilityAnim animType);
+    void startCooldown(int abilityId);
     AnimationState getAttackAnimState(Direction dir, AbilityAnim animType);
     std::vector<Ability> loadAbilitiesForClass(PlayerClass playerClass);
     const std::vector<Ability>& getAbilities() const;

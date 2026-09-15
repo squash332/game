@@ -30,6 +30,16 @@ void Player::update(float delta, int frame)
     next_x_ = x_;
     next_y_ = y_;
 
+    // ability cooldown timer
+    for (auto &ability : abilities_) {
+        if (ability.cooldown_remaining > 0.0f)
+            ability.cooldown_remaining -= delta;
+
+        if (ability.cooldown_remaining == 0.0f || ability.cooldown_remaining < 0.0f) 
+            ability.cooldown_remaining = 0.0f;
+
+    }
+
     bool is_moving_vertical = (direction_ & Direction::Up) || (direction_ & Direction::Down);
     bool is_moving_horizontal = (direction_ & Direction::Right) || (direction_ & Direction::Left);
 
@@ -41,10 +51,10 @@ void Player::update(float delta, int frame)
 
     if (direction_ & Direction::Up)
     {
-        if (!is_attacking_) 
+        if (!is_attacking_)
             anim_state_ = AnimationState::WalkUp;
-            
-        if (IsKeyDown(KEY_W)) 
+
+        if (IsKeyDown(KEY_W))
             next_y_ -= step;
 
         last_direction_ = Direction::Up;
@@ -53,9 +63,9 @@ void Player::update(float delta, int frame)
 
     if (direction_ & Direction::Down)
     {
-        if (!is_attacking_) 
+        if (!is_attacking_)
             anim_state_ = AnimationState::WalkDown;
-            
+
         if (IsKeyDown(KEY_S))
             next_y_ += step;
 
@@ -65,10 +75,10 @@ void Player::update(float delta, int frame)
 
     if (direction_ & Direction::Right)
     {
-        if (!is_attacking_) 
+        if (!is_attacking_)
             anim_state_ = AnimationState::WalkRight;
-        
-        if (IsKeyDown(KEY_D)) 
+
+        if (IsKeyDown(KEY_D))
             next_x_ += step;
 
         last_direction_ = Direction::Right;
@@ -77,9 +87,9 @@ void Player::update(float delta, int frame)
 
     if (direction_ & Direction::Left)
     {
-        if (!is_attacking_) 
+        if (!is_attacking_)
             anim_state_ = AnimationState::WalkLeft;
-        
+
         if (IsKeyDown(KEY_A))
             next_x_ -= step;
 
@@ -119,30 +129,47 @@ void Player::attack(Direction dir, AbilityAnim animType)
     attack_timer_ = 0.0f;
     attack_start_frame_ = frame_number_;
     direction_ = dir;
-
     anim_state_ = getAttackAnimState(dir, animType);
+}
+
+void Player::startCooldown(int abilityId)
+{
+    for (auto &ability : abilities_) {
+        if (ability.id == abilityId) {
+            ability.cooldown_remaining = ability.cooldown;
+            return;
+        }
+    }
 }
 
 AnimationState Player::getAttackAnimState(Direction dir, AbilityAnim animType)
 {
     switch (animType)
     {
-        case AbilityAnim::Slash:
-            switch (dir)
-            {
-                case Direction::Up:    return AnimationState::SlashUp;
-                case Direction::Down:  return AnimationState::SlashDown;
-                case Direction::Left:  return AnimationState::SlashLeft;
-                default:                return AnimationState::SlashRight;
-            }
-        case AbilityAnim::Clap:
-            switch (dir)
-            {
-                case Direction::Up:    return AnimationState::ClapUp;
-                case Direction::Down:  return AnimationState::ClapDown;
-                case Direction::Left:  return AnimationState::ClapLeft;
-                default:                return AnimationState::ClapRight;
-            }
+    case AbilityAnim::Slash:
+        switch (dir)
+        {
+        case Direction::Up:
+            return AnimationState::SlashUp;
+        case Direction::Down:
+            return AnimationState::SlashDown;
+        case Direction::Left:
+            return AnimationState::SlashLeft;
+        default:
+            return AnimationState::SlashRight;
+        }
+    case AbilityAnim::Clap:
+        switch (dir)
+        {
+        case Direction::Up:
+            return AnimationState::ClapUp;
+        case Direction::Down:
+            return AnimationState::ClapDown;
+        case Direction::Left:
+            return AnimationState::ClapLeft;
+        default:
+            return AnimationState::ClapRight;
+        }
     }
     return AnimationState::SlashRight;
 }
@@ -172,16 +199,12 @@ std::vector<Ability> Player::loadAbilitiesForClass(PlayerClass playerClass)
                 .damage = 10,
                 .cooldown = 5.0f,
                 .keybinding = {KEY_TWO},
-                .animType = AbilityAnim::Clap
-            }
-            };
-            
+                .animType = AbilityAnim::Clap}};
     }
     return {};
 }
 
-
-const std::vector<Ability>& Player::getAbilities() const
+const std::vector<Ability> &Player::getAbilities() const
 {
     return abilities_;
 }

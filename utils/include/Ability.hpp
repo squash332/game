@@ -27,6 +27,7 @@ struct Ability
     float cooldown = 0.0f;
     Keybind keybinding;
     AbilityAnim animType = AbilityAnim::Slash;
+    float cooldown_remaining = 0.0f;
 };
 
 inline std::string keyToString(int key)
