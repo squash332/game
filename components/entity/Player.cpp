@@ -44,7 +44,9 @@ void Player::update(float delta, int frame)
         if (!is_attacking_) 
             anim_state_ = AnimationState::WalkUp;
             
-        next_y_ -= step;
+        if (IsKeyDown(KEY_W)) 
+            next_y_ -= step;
+
         last_direction_ = Direction::Up;
         moved = true;
     }
@@ -54,7 +56,9 @@ void Player::update(float delta, int frame)
         if (!is_attacking_) 
             anim_state_ = AnimationState::WalkDown;
             
-        next_y_ += step;
+        if (IsKeyDown(KEY_S))
+            next_y_ += step;
+
         last_direction_ = Direction::Down;
         moved = true;
     }
@@ -63,8 +67,10 @@ void Player::update(float delta, int frame)
     {
         if (!is_attacking_) 
             anim_state_ = AnimationState::WalkRight;
-            
-        next_x_ += step;
+        
+        if (IsKeyDown(KEY_D)) 
+            next_x_ += step;
+
         last_direction_ = Direction::Right;
         moved = true;
     }
@@ -73,8 +79,10 @@ void Player::update(float delta, int frame)
     {
         if (!is_attacking_) 
             anim_state_ = AnimationState::WalkLeft;
-            
-        next_x_ -= step;
+        
+        if (IsKeyDown(KEY_A))
+            next_x_ -= step;
+
         last_direction_ = Direction::Left;
         moved = true;
     }
@@ -110,7 +118,7 @@ void Player::attack(Direction dir, AbilityAnim animType)
     is_attacking_ = true;
     attack_timer_ = 0.0f;
     attack_start_frame_ = frame_number_;
-    setDirection(dir);
+    direction_ = dir;
 
     anim_state_ = getAttackAnimState(dir, animType);
 }
