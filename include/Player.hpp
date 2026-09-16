@@ -29,6 +29,7 @@ public:
     AnimationState getAttackAnimState(Direction dir, AbilityAnim animType);
     std::vector<Ability> loadAbilitiesForClass(PlayerClass playerClass);
     const std::vector<Ability>& getAbilities() const;
+    void swapAbilities(int indexA, int indexB);
     int frame_number_ = 0;
 
 private:

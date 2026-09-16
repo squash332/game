@@ -1,65 +1,63 @@
 #include "ActionBar.hpp"
 
-ActionBar::ActionBar() : rows_(1), cols_(3), slotSize_(ABILITY_ICON_SIZE), iconPadding_(5)
+ActionBar::ActionBar() : rows_(1), cols_(3), iconPadding_(5), grabbed_slot_(-1), slots_(rows_ * cols_)
 {
+    slots_[0].keybind.key = KEY_ONE;
+    slots_[1].keybind.key = KEY_TWO;
+    slots_[2].keybind.key = KEY_THREE;
+
     Settings settings = loadSettings(SETTINGS_PATH);
+
     if (settings.action_bar_config.width == 0 && settings.action_bar_config.height == 0)
     {
-        float totalWidth = cols_ * slotSize_ + (cols_ + 1) * iconPadding_;
-        float totalHeight = rows_ * slotSize_ + (rows_ + 1) * iconPadding_;
-
-        action_bar_ = {
-            (VIRTUAL_WIDTH - totalWidth) / 2.0f,
-            VIRTUAL_HEIGHT - totalHeight,
-            totalWidth,
-            totalHeight};
+        buildDefaultActionBar();
     }
     else
     {
         action_bar_ = settings.action_bar_config;
     }
 
-    slot_keybinds_ = {{KEY_ONE}, {KEY_TWO}, {KEY_THREE}};
     std::cout << "action bar constructed" << std::endl;
+}
+
+void ActionBar::buildDefaultActionBar()
+{
+    const float slotSize = slots_[0].size;
+    float totalWidth = cols_ * slotSize + (cols_ + 1) * iconPadding_;
+    float totalHeight = rows_ * slotSize + (rows_ + 1) * iconPadding_;
+
+    action_bar_ = {
+        (VIRTUAL_WIDTH - totalWidth) / 2.0f,
+        VIRTUAL_HEIGHT - totalHeight,
+        totalWidth,
+        totalHeight};
 }
 
 void ActionBar::draw(const Player &player)
 {
-
     const auto &abilities = player.getAbilities();
-    int slotCount = rows_ * cols_;
 
     DrawRectangleRec(action_bar_, COLOR_WINDOW_BG);
 
-    for (int i = 0; i < slotCount; i++)
+    for (size_t i = 0; i < slots_.size(); ++i)
     {
-        Rectangle slot = getSlotBounds(i);
+        const auto &slot = slots_[i];
+        const Rectangle bounds = getSlotBounds(i);
 
-        // draw the ability icon if this slot has one
-        if (i < (int)slot_keybinds_.size())
+        if (i < abilities.size())
         {
-            DrawTextureV(abilities[i].icon, {(slot.x), (slot.y)}, WHITE);
+            const auto &ability = abilities[i];
 
-            // cooldown overlay
-            if (abilities[i].cooldown_remaining > 0.0f)
-            {
-                float fraction = abilities[i].cooldown_remaining / abilities[i].cooldown; 
-                float overlayHeight = slotSize_ * fraction;
-
-                DrawRectangle(
-                    slot.x,
-                    slot.y + (slotSize_ - overlayHeight),
-                    slotSize_,
-                    overlayHeight,
-                    Fade(BLACK, 0.6f));
-
-                std::string cdText = std::to_string((int)ceilf(abilities[i].cooldown_remaining));
-                DrawText(cdText.c_str(), slot.x + slotSize_ / 2 - 4, slot.y + slotSize_ / 2 - 4, 10, WHITE);
-            }
+            DrawTextureV(ability.icon, {bounds.x, bounds.y}, WHITE);
+            drawCooldown(bounds, ability, i);
         }
-        // draw the slot's keybind label — always, occupied or not
-        std::string keyLabel = keybindToString(slot_keybinds_[i]);
-        DrawText(keyLabel.c_str(), slot.x + 2, slot.y + 2, 8, WHITE);
+
+        drawKeybind(bounds, i);
+    }
+
+    if (grabbed_slot_ >= 0 && static_cast<size_t>(grabbed_slot_) < abilities.size())
+    {
+        DrawTextureV(abilities[grabbed_slot_].icon, mouse, WHITE);
     }
 }
 
@@ -89,7 +87,36 @@ void ActionBar::handleDrag()
         drag_state_.end();
 }
 
-void ActionBar::update()
+/***
+ * @brief Swaps abilities if player Shift clicks and holds LMB drags it to a valid position.
+ * @returns Index of the slot in the action bar or -1 for returning
+ */
+int ActionBar::handleAbilitySwap(Player &player)
+{
+    const auto &abilities = player.getAbilities();
+
+    // by having only this block in HOLDING_SHIFT, we can move the ability without holding shift the entire time
+    // previously by having all the code in the if block, player would have a hanging icon to his cursor
+    // if he decided to release shift and try to move an ability to a different slot
+    if (HOLDING_SHIFT)
+    {
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            grabbed_slot_ = getHoveredSlot(abilities.size());
+    }
+
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && grabbed_slot_ != -1)
+    {
+        int dropped = getHoveredSlot(abilities.size());
+        if (dropped != -1 && dropped != grabbed_slot_)
+            player.swapAbilities(grabbed_slot_, dropped);
+
+        grabbed_slot_ = -1;
+    }
+
+    return -1;
+}
+
+void ActionBar::updateEditModeComponents()
 {
     handleBarClick();
     handleDrag();
@@ -97,7 +124,6 @@ void ActionBar::update()
 
 Rectangle ActionBar::getActionBar() const
 {
-
     return action_bar_;
 }
 
@@ -117,24 +143,63 @@ int ActionBar::getHoveredSlot(size_t abilityCount) const
     return -1;
 }
 
-int ActionBar::getActionBarCols() const
-{
-    return cols_;
-}
-
 Rectangle ActionBar::getSlotBounds(int i) const
 {
     int row = i / cols_;
     int col = i % cols_;
+    const float slotSize = slots_[0].size;
 
     return {
-        action_bar_.x + iconPadding_ + col * (slotSize_ + iconPadding_),
-        action_bar_.y + iconPadding_ + row * (slotSize_ + iconPadding_),
-        slotSize_,
-        slotSize_};
+        action_bar_.x + iconPadding_ + col * (slotSize + iconPadding_),
+        action_bar_.y + iconPadding_ + row * (slotSize + iconPadding_),
+        slotSize,
+        slotSize};
 }
 
-int ActionBar::getActionBarRows() const
+Keybind ActionBar::getSlotKeybind(int index) const
 {
-    return rows_;
+    if (index >= 0 && index < static_cast<int>(slots_.size()))
+    {
+        return slots_[index].keybind;
+    }
+
+    return {};
+}
+
+void ActionBar::drawCooldown(Rectangle bounds, const Ability &ability, int i)
+{
+    if (ability.cooldown_remaining <= 0.0f)
+        return;
+
+    const float fraction = ability.cooldown_remaining / ability.cooldown;
+
+    const float overlayHeight = slots_[i].size * fraction;
+
+    DrawRectangle(
+        bounds.x,
+        bounds.y + slots_[i].size - overlayHeight,
+        slots_[i].size,
+        overlayHeight,
+        Fade(BLACK, 0.6f));
+
+    const std::string text = std::to_string(static_cast<int>(std::ceil(ability.cooldown_remaining)));
+
+    DrawText(
+        text.c_str(),
+        bounds.x + slots_[i].size / 2 - 4,
+        bounds.y + slots_[i].size / 2 - 4,
+        10,
+        WHITE);
+}
+
+void ActionBar::drawKeybind(Rectangle bounds, int i)
+{
+    const std::string label = keybindToString(slots_[i].keybind);
+
+    DrawText(
+        label.c_str(),
+        bounds.x + 2,
+        bounds.y + 2,
+        8,
+        WHITE);
 }

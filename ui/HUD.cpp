@@ -94,7 +94,7 @@ void HUD::handleDrag()
     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) drag_state_.end();
 }
 
-void HUD::update()
+void HUD::updateEditModeComponents()
 {
     handleComponentClick();
     handleDrag();

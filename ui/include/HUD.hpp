@@ -34,7 +34,7 @@ public:
     void drawButton(const Button &button, int fontSize, Color bgColor, Color textColor);
 
 
-    void update();
+    void updateEditModeComponents();
     
     void setPlayerFramePos(Rectangle pos);
     void setTargetFramePos(Rectangle pos);

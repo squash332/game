@@ -50,11 +50,7 @@ void Game::run()
             frame++;
         }
         updateTargetRange();
-
-        if (in_edit_mode)
-        {
-            updateEditMode();
-        }
+        updateUI();
 
         // make sure changes are discarded ALSO when player presses ESC
         if (in_edit_mode && IsKeyPressed(KEY_ESCAPE))
@@ -145,6 +141,8 @@ void Game::displayLogs()
 
 void Game::handleAbilityClick()
 {
+    if (HOLDING_SHIFT)
+        return;
     if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         return;
 
@@ -152,7 +150,8 @@ void Game::handleAbilityClick()
 
     int slot = action_bar_.getHoveredSlot(abilities.size());
 
-    if (slot != -1) handleAbilityCast(abilities[slot]);
+    if (slot != -1)
+        handleAbilityCast(abilities[slot]);
 }
 
 void Game::handleTargetClick()
@@ -241,14 +240,14 @@ void Game::updateTargetRange()
 // handles cast for 1 specific ability
 void Game::handleAbilityCast(const Ability &ability)
 {
-    if (ability.cooldown_remaining != 0) return;
-    if (!canAttack()) return;
-
+    if (ability.cooldown_remaining != 0)
+        return;
+    if (!canAttack())
+        return;
 
     MeleeRangeCircle player_circle = player_.getMeleeHitbox();
     MeleeRangeCircle target_circle = current_target->getMeleeHitbox();
     Direction facing = getDirectionToTarget(player_circle.center.x, player_circle.center.y, target_circle.center.x, target_circle.center.y);
-
 
     player_.attack(facing, ability.animType);
     current_target->takeDamage(ability.damage);
@@ -258,11 +257,13 @@ void Game::handleAbilityCast(const Ability &ability)
 // delegates cast to handleAbilityCast()
 void Game::handleAbilityInput()
 {
-    for (const auto &ability : player_.getAbilities())
+    const auto &abilities = player_.getAbilities();
+
+    for (size_t i = 0; i < abilities.size(); i++)
     {
-        if (IsKeyPressed(ability.keybinding.key))
+        if (IsKeyPressed(action_bar_.getSlotKeybind(i).key))
         {
-            handleAbilityCast(ability);
+            handleAbilityCast(abilities[i]);
             return;
         }
     }
@@ -365,10 +366,15 @@ void Game::cachePositions()
     std::cout << "cached!!" << std::endl;
 }
 
-void Game::updateEditMode()
+void Game::updateUI()
 {
-    hud_.update();
-    action_bar_.update();
+    if (in_edit_mode)
+    {
+        hud_.updateEditModeComponents();
+        action_bar_.updateEditModeComponents();
+        return;
+    }
+    action_bar_.handleAbilitySwap(player_);
 }
 
 void Game::drawEditMode()
@@ -383,7 +389,6 @@ void Game::drawEditMode()
 
     discard_btn_ = save_btn_;
     discard_btn_.label = "Discard";
-    // TODO FIX DISCARD, NOT WORKING RN!!
     save_btn_.setBounds({save_btn_.bounds.x - save_btn_.bounds.width, save_btn_.bounds.y});
     discard_btn_.setBounds({save_btn_.bounds.x + save_btn_.bounds.width * 2, save_btn_.bounds.y});
     hud_.drawButton(save_btn_, FONT_SIZE, BLACK, WHITE);

@@ -9,34 +9,42 @@
 
 #include "raylib.h"
 
+struct Slot
+{
+    Keybind keybind;
+    float size = ABILITY_ICON_SIZE;
+};
+
 class ActionBar
 {
 public:
     ActionBar();
+    ~ActionBar() = default;
+
+    void buildDefaultActionBar();
     void draw(const Player &player);
     void handleBarClick();
     void handleDrag();
-    void update();
+    void updateEditModeComponents();
+    int handleAbilitySwap(Player &player);
 
-    ~ActionBar() = default;
-
-    Rectangle getActionBar() const;
     void setActionBarPos(Rectangle pos);
+
     int getHoveredSlot(size_t abilityCount) const;
-
-    void setActionBarRows(int numOfRows);
-    void setActionBarCols(int numOfCols);
-
-    int getActionBarRows() const;
-    int getActionBarCols() const;
-
+    Rectangle getActionBar() const;
     Rectangle getSlotBounds(int index) const;
+    Keybind getSlotKeybind(int index) const;
+
+private:
+    void drawCooldown(Rectangle rec, const Ability &ability, int index);
+    void drawKeybind(Rectangle rec, int index);
+
 private:
     Rectangle action_bar_;
     Vector2 position_;
-    std::vector<Keybind> slot_keybinds_;
     int rows_;
     int cols_;
-    float slotSize_;
     float iconPadding_;
+    int grabbed_slot_;
+    std::vector<Slot> slots_;
 };

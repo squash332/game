@@ -209,6 +209,12 @@ const std::vector<Ability> &Player::getAbilities() const
     return abilities_;
 }
 
+void Player::swapAbilities(int indexA, int indexB)
+{
+    if (indexA >= 0 && indexB >= 0 && indexA < (int)abilities_.size() && indexB < (int)abilities_.size())
+        std::swap(abilities_[indexA], abilities_[indexB]);
+}
+
 void Player::setDirection(Direction dir)
 {
     direction_ = dir;

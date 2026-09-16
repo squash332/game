@@ -58,7 +58,7 @@ public:
   bool drawn_menu;
   bool in_edit_mode;
   void cachePositions();
-  void updateEditMode();
+  void updateUI();
   void drawEditMode();
   void endEditMode(bool save);
 
