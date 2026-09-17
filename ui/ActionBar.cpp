@@ -39,11 +39,12 @@ void ActionBar::draw(const Player &player)
 
     DrawRectangleRec(action_bar_, COLOR_WINDOW_BG);
 
-    for (size_t i = 0; i < slots_.size(); ++i)
+    for (size_t i = 0; i < slots_.size(); i++)
     {
         const auto &slot = slots_[i];
         const Rectangle bounds = getSlotBounds(i);
-
+        
+        // assign an ability to a slot with a certain keybind
         if (i < abilities.size())
         {
             const auto &ability = abilities[i];

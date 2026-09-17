@@ -187,7 +187,6 @@ std::vector<Ability> Player::loadAbilitiesForClass(PlayerClass playerClass)
                 .description = "A quick melee attack that deals damage.",
                 .damage = 20,
                 .cooldown = 3.0f,
-                .keybinding = {KEY_ONE},
                 .animType = AbilityAnim::Slash
 
             },
@@ -198,7 +197,6 @@ std::vector<Ability> Player::loadAbilitiesForClass(PlayerClass playerClass)
                 .description = "An AoE attack that deals damage to multiple enemies.",
                 .damage = 10,
                 .cooldown = 5.0f,
-                .keybinding = {KEY_TWO},
                 .animType = AbilityAnim::Clap}};
     }
     return {};

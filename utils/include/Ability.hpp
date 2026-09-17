@@ -21,11 +21,9 @@ struct Ability
     int id;
     std::string name;
     Texture2D icon;
-    Vector2 iconSize = ABILITY_ICON_SIZE_VECTOR;
     std::string description;
     int damage = 0;
     float cooldown = 0.0f;
-    Keybind keybinding;
     AbilityAnim animType = AbilityAnim::Slash;
     float cooldown_remaining = 0.0f;
 };

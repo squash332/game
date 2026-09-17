@@ -330,7 +330,8 @@ void Game::handleEscapeKey()
 void Game::handleMenuClick()
 {
     // if edit mode button clicked, hide menu, cache current positions and return
-    if (CheckCollisionPointRec(mouse, hud_.getBtnEditModeBounds()))
+    // added and drawn_menu check to prevent from opening edit mode when clicking without the menu window open
+    if (CheckCollisionPointRec(mouse, hud_.getBtnEditModeBounds()) && drawn_menu)
     {
         drawn_menu = false;
         cachePositions();

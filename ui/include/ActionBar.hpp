@@ -11,8 +11,14 @@
 
 struct Slot
 {
+    std::optional<Ability> ability;
     Keybind keybind;
     float size = ABILITY_ICON_SIZE;
+
+    bool empty() const
+    {
+        return !ability.has_value();
+    }
 };
 
 class ActionBar
