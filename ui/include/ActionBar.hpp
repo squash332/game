@@ -11,35 +11,41 @@
 
 struct Slot
 {
-    std::optional<Ability> ability;
-    Keybind keybind;
+    Ability* ability = nullptr;
+    Keybind keybind{};
     float size = ABILITY_ICON_SIZE;
 
     bool empty() const
     {
-        return !ability.has_value();
+        return ability == nullptr;
     }
 };
 
 class ActionBar
 {
 public:
-    ActionBar();
+    ActionBar( Player &player);
     ~ActionBar() = default;
 
-    void buildDefaultActionBar();
-    void draw(const Player &player);
+    void startAbilityCooldown(Ability &ability);
+    void updateCooldowns(float delta);
+    void buildDefaultActionBar(Spellbook &spellbook);
+    void draw();
     void handleBarClick();
     void handleDrag();
     void updateEditModeComponents();
     int handleAbilitySwap(Player &player);
+    void reArrangeSlots(int first, int second);
 
     void setActionBarPos(Rectangle pos);
 
-    int getHoveredSlot(size_t abilityCount) const;
+    int getHoveredSlot() const;
     Rectangle getActionBar() const;
     Rectangle getSlotBounds(int index) const;
     Keybind getSlotKeybind(int index) const;
+    const std::vector<Slot> getSlots() const;
+    Ability* getAbility(int slotIndex);
+    void setAbility(int slotIndex, Ability &ability);
 
 private:
     void drawCooldown(Rectangle rec, const Ability &ability, int index);

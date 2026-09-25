@@ -3,17 +3,12 @@
 #include "Entity.hpp"
 #include "Animation.hpp"
 #include "Ability.hpp"
+#include "Spellbook.hpp"
 
-enum class PlayerClass
-{
-    Warrior,
-    Mage,
-    Paladin
-};
 class Player : public Entity
 {
 public:
-    Player(std::string name);
+    Player(std::string name, PlayerClass playerClass);
 
     void update(float delta, int frame);
     void setDirection(Direction dir);
@@ -25,18 +20,16 @@ public:
     int getAttackStartFrame() const { return attack_start_frame_; }
 
     void attack(Direction dir, AbilityAnim animType);
-    void startCooldown(int abilityId);
     AnimationState getAttackAnimState(Direction dir, AbilityAnim animType);
-    std::vector<Ability> loadAbilitiesForClass(PlayerClass playerClass);
-    const std::vector<Ability>& getAbilities() const;
-    void swapAbilities(int indexA, int indexB);
-    int frame_number_ = 0;
+    Spellbook& getSpellbook();
 
+    int frame_number_ = 0;
 private:
     std::string name_;
     AnimationState anim_state_;
     Direction last_direction_ = Direction::None;
-    std::vector<Ability> abilities_;
+    Spellbook spellbook_;
+    PlayerClass player_class_;
     bool is_attacking_ = false;
     float attack_timer_ = 0.0f;
     int attack_start_frame_ = 0;

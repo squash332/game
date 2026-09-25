@@ -2,15 +2,16 @@
 #include "Constants.hpp"
 #include <math.h>
 
-Player::Player(std::string name)
+Player::Player(std::string name, PlayerClass playerClass)
     : Entity(50.0f, 150.0f, true, SPRITE_WIDTH, SPRITE_HEIGHT, HITBOX_WIDTH, HITBOX_HEIGHT, MeleeRangeCircle{}),
       name_(name),
-      anim_state_(AnimationState::IdleDown)
+      anim_state_(AnimationState::IdleDown),
+      player_class_(playerClass)
 {
     std::cout << "player constructor ran" << std::endl;
     std::cout << "player width: " << hitbox_width_ << std::endl;
     std::cout << "player height: " << hitbox_height_ << std::endl;
-    abilities_ = loadAbilitiesForClass(PlayerClass::Warrior);
+    spellbook_.loadForClass(playerClass);
     in_melee_range_ = false;
 }
 
@@ -30,15 +31,6 @@ void Player::update(float delta, int frame)
     next_x_ = x_;
     next_y_ = y_;
 
-    // ability cooldown timer
-    for (auto &ability : abilities_) {
-        if (ability.cooldown_remaining > 0.0f)
-            ability.cooldown_remaining -= delta;
-
-        if (ability.cooldown_remaining == 0.0f || ability.cooldown_remaining < 0.0f) 
-            ability.cooldown_remaining = 0.0f;
-
-    }
 
     bool is_moving_vertical = (direction_ & Direction::Up) || (direction_ & Direction::Down);
     bool is_moving_horizontal = (direction_ & Direction::Right) || (direction_ & Direction::Left);
@@ -132,15 +124,6 @@ void Player::attack(Direction dir, AbilityAnim animType)
     anim_state_ = getAttackAnimState(dir, animType);
 }
 
-void Player::startCooldown(int abilityId)
-{
-    for (auto &ability : abilities_) {
-        if (ability.id == abilityId) {
-            ability.cooldown_remaining = ability.cooldown;
-            return;
-        }
-    }
-}
 
 AnimationState Player::getAttackAnimState(Direction dir, AbilityAnim animType)
 {
@@ -174,43 +157,10 @@ AnimationState Player::getAttackAnimState(Direction dir, AbilityAnim animType)
     return AnimationState::SlashRight;
 }
 
-std::vector<Ability> Player::loadAbilitiesForClass(PlayerClass playerClass)
-{
-    switch (playerClass)
-    {
-    case PlayerClass::Warrior:
-        return {
-            Ability{
-                .id = 1,
-                .name = "Slash",
-                .icon = LoadTexture("res/slash.png"),
-                .description = "A quick melee attack that deals damage.",
-                .damage = 20,
-                .cooldown = 3.0f,
-                .animType = AbilityAnim::Slash
 
-            },
-            Ability{
-                .id = 2,
-                .name = "Clap",
-                .icon = LoadTexture("res/clap.png"),
-                .description = "An AoE attack that deals damage to multiple enemies.",
-                .damage = 10,
-                .cooldown = 5.0f,
-                .animType = AbilityAnim::Clap}};
-    }
-    return {};
-}
-
-const std::vector<Ability> &Player::getAbilities() const
+Spellbook& Player::getSpellbook()
 {
-    return abilities_;
-}
-
-void Player::swapAbilities(int indexA, int indexB)
-{
-    if (indexA >= 0 && indexB >= 0 && indexA < (int)abilities_.size() && indexB < (int)abilities_.size())
-        std::swap(abilities_[indexA], abilities_[indexB]);
+    return spellbook_;
 }
 
 void Player::setDirection(Direction dir)

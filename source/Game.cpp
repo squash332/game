@@ -2,13 +2,13 @@
 
 Game::Game()
     : game_window_(),
-      player_("filip"),
+      player_("filip", PlayerClass::Warrior),
       input_(),
       renderer_(),
       map_("res/testmap.json"),
       cam_(),
       hud_(),
-      action_bar_(),
+      action_bar_(player_),
       drawn_menu(false),
       in_edit_mode(false),
       cached_player_frame_{0},
@@ -51,6 +51,7 @@ void Game::run()
         }
         updateTargetRange();
         updateUI();
+        action_bar_.updateCooldowns(delta_time);
 
         // make sure changes are discarded ALSO when player presses ESC
         if (in_edit_mode && IsKeyPressed(KEY_ESCAPE))
@@ -82,7 +83,7 @@ void Game::run()
         cam_.endFrame();
         // end camera
 
-        action_bar_.draw(player_);
+        action_bar_.draw();
         hud_.drawPlayerFrame(player_);
         if (current_target != nullptr)
             hud_.drawTargetedFrame(*current_target);
@@ -95,7 +96,7 @@ void Game::run()
         game_window_.endFrame();
         // end drawing
     }
-}
+} 
 
 void Game::handleLeftMouseClick()
 {
@@ -146,12 +147,12 @@ void Game::handleAbilityClick()
     if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         return;
 
-    const auto &abilities = player_.getAbilities();
+    int slot = action_bar_.getHoveredSlot();
 
-    int slot = action_bar_.getHoveredSlot(abilities.size());
+    if (slot == -1) return;
 
-    if (slot != -1)
-        handleAbilityCast(abilities[slot]);
+    Ability* ability = action_bar_.getAbility(slot);
+    if (ability) handleAbilityCast(*ability);
 }
 
 void Game::handleTargetClick()
@@ -238,7 +239,7 @@ void Game::updateTargetRange()
 }
 
 // handles cast for 1 specific ability
-void Game::handleAbilityCast(const Ability &ability)
+void Game::handleAbilityCast(Ability &ability)
 {
     if (ability.cooldown_remaining != 0)
         return;
@@ -251,19 +252,19 @@ void Game::handleAbilityCast(const Ability &ability)
 
     player_.attack(facing, ability.animType);
     current_target->takeDamage(ability.damage);
-    player_.startCooldown(ability.id);
+    action_bar_.startAbilityCooldown(ability);
 }
 
 // delegates cast to handleAbilityCast()
 void Game::handleAbilityInput()
 {
-    const auto &abilities = player_.getAbilities();
+    const auto &slots = action_bar_.getSlots();
 
-    for (size_t i = 0; i < abilities.size(); i++)
+    for (auto i = 0; i < slots.size(); i++)
     {
-        if (IsKeyPressed(action_bar_.getSlotKeybind(i).key))
+        if (!slots[i].empty() && IsKeyPressed(slots[i].keybind.key))
         {
-            handleAbilityCast(abilities[i]);
+            handleAbilityCast(*slots[i].ability);
             return;
         }
     }

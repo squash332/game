@@ -48,7 +48,7 @@ public:
   void updateEnemies();
   void updateTargetRange();
   bool canAttack();
-  void handleAbilityCast(const Ability &ability);
+  void handleAbilityCast(Ability &ability);
 
   void handleDebugMode(); // open with 'T' keybind
   void handleEscapeKey();

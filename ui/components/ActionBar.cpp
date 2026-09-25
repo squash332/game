@@ -1,6 +1,6 @@
 #include "ActionBar.hpp"
 
-ActionBar::ActionBar() : rows_(1), cols_(3), iconPadding_(5), grabbed_slot_(-1), slots_(rows_ * cols_)
+ActionBar::ActionBar( Player &player) : rows_(1), cols_(5), iconPadding_(5), grabbed_slot_(-1), slots_(rows_ * cols_)
 {
     slots_[0].keybind.key = KEY_ONE;
     slots_[1].keybind.key = KEY_TWO;
@@ -10,7 +10,7 @@ ActionBar::ActionBar() : rows_(1), cols_(3), iconPadding_(5), grabbed_slot_(-1),
 
     if (settings.action_bar_config.width == 0 && settings.action_bar_config.height == 0)
     {
-        buildDefaultActionBar();
+        buildDefaultActionBar(player.getSpellbook());
     }
     else
     {
@@ -20,7 +20,31 @@ ActionBar::ActionBar() : rows_(1), cols_(3), iconPadding_(5), grabbed_slot_(-1),
     std::cout << "action bar constructed" << std::endl;
 }
 
-void ActionBar::buildDefaultActionBar()
+void ActionBar::startAbilityCooldown(Ability& ability)
+{
+    ability.cooldown_remaining = ability.cooldown;
+}
+
+
+
+void ActionBar::updateCooldowns(float delta)
+{
+    for (auto& slot : slots_)
+    {   
+        // if slot is empty just insta skip it, we dont care about it dont access it (seg fault)
+        if (slot.empty())
+            continue;
+
+        if (slot.ability->cooldown_remaining > 0.0f)
+            slot.ability->cooldown_remaining -= delta;
+
+        if (slot.ability->cooldown_remaining < 0.0f)
+            slot.ability->cooldown_remaining = 0.0f;
+    }
+}
+
+
+void ActionBar::buildDefaultActionBar(Spellbook &spellbook)
 {
     const float slotSize = slots_[0].size;
     float totalWidth = cols_ * slotSize + (cols_ + 1) * iconPadding_;
@@ -31,11 +55,16 @@ void ActionBar::buildDefaultActionBar()
         VIRTUAL_HEIGHT - totalHeight,
         totalWidth,
         totalHeight};
+
+    if (auto* slash = spellbook.getAbility(0))
+        slots_[0].ability = slash;
+    
+    if (auto* clap = spellbook.getAbility(1)) 
+        slots_[1].ability = clap;
 }
 
-void ActionBar::draw(const Player &player)
+void ActionBar::draw()
 {
-    const auto &abilities = player.getAbilities();
 
     DrawRectangleRec(action_bar_, COLOR_WINDOW_BG);
 
@@ -43,22 +72,21 @@ void ActionBar::draw(const Player &player)
     {
         const auto &slot = slots_[i];
         const Rectangle bounds = getSlotBounds(i);
-        
-        // assign an ability to a slot with a certain keybind
-        if (i < abilities.size())
-        {
-            const auto &ability = abilities[i];
 
-            DrawTextureV(ability.icon, {bounds.x, bounds.y}, WHITE);
-            drawCooldown(bounds, ability, i);
+        // assign an ability to a slot with a certain keybind
+        if (!slot.empty())
+        {
+
+            DrawTextureV(slot.ability->icon, {bounds.x, bounds.y}, WHITE);
+            drawCooldown(bounds, *slot.ability, i);
         }
 
         drawKeybind(bounds, i);
     }
 
-    if (grabbed_slot_ >= 0 && static_cast<size_t>(grabbed_slot_) < abilities.size())
+    if (grabbed_slot_ >= 0 && !slots_[grabbed_slot_].empty())
     {
-        DrawTextureV(abilities[grabbed_slot_].icon, mouse, WHITE);
+        DrawTextureV(slots_[grabbed_slot_].ability->icon, mouse, WHITE);
     }
 }
 
@@ -94,27 +122,36 @@ void ActionBar::handleDrag()
  */
 int ActionBar::handleAbilitySwap(Player &player)
 {
-    const auto &abilities = player.getAbilities();
-
     // by having only this block in HOLDING_SHIFT, we can move the ability without holding shift the entire time
     // previously by having all the code in the if block, player would have a hanging icon to his cursor
     // if he decided to release shift and try to move an ability to a different slot
     if (HOLDING_SHIFT)
     {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-            grabbed_slot_ = getHoveredSlot(abilities.size());
+            grabbed_slot_ = getHoveredSlot();
     }
-
+    // TODO : 
+    // remove the grabbed slot ability icon when grabbed slot is filled
+    // handle dropped being not in the action bar (remove grabbed slot, assign ability to empty)
+    
     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && grabbed_slot_ != -1)
     {
-        int dropped = getHoveredSlot(abilities.size());
+        int dropped = getHoveredSlot();
         if (dropped != -1 && dropped != grabbed_slot_)
-            player.swapAbilities(grabbed_slot_, dropped);
+            reArrangeSlots(grabbed_slot_, dropped);
 
         grabbed_slot_ = -1;
     }
 
     return -1;
+}
+
+void ActionBar::reArrangeSlots(int first, int second)
+{
+    if (first >= 0 && second >= 0 && first < slots_.size() && second < slots_.size())
+    {
+        std::swap(slots_[first].ability, slots_[second].ability);
+    }
 }
 
 void ActionBar::updateEditModeComponents()
@@ -134,12 +171,15 @@ void ActionBar::setActionBarPos(Rectangle pos)
     action_bar_.y = pos.y;
 }
 
-int ActionBar::getHoveredSlot(size_t abilityCount) const
+int ActionBar::getHoveredSlot() const
 {
-    for (size_t i = 0; i < abilityCount; i++)
+    for (size_t i = 0; i < slots_.size(); i++)
     {
         if (CheckCollisionPointRec(mouse, getSlotBounds(i)))
+        {
+            std::cout << "clicked slot number: " << i << std::endl;
             return (int)i;
+        }
     }
     return -1;
 }
@@ -165,6 +205,26 @@ Keybind ActionBar::getSlotKeybind(int index) const
     }
 
     return {};
+}
+
+const std::vector<Slot> ActionBar::getSlots() const
+{
+    return slots_;
+}
+
+Ability *ActionBar::getAbility(int slotIndex)
+{
+    if (slotIndex < 0 || slotIndex >= static_cast<int>(slots_.size()))
+        return nullptr;
+
+    return slots_[slotIndex].ability;
+}
+
+void ActionBar::setAbility(int slotIndex, Ability &ability)
+{
+    if (slotIndex < 0 || slotIndex >= static_cast<int>(slots_.size())) return;
+
+    slots_[slotIndex].ability = &ability;
 }
 
 void ActionBar::drawCooldown(Rectangle bounds, const Ability &ability, int i)

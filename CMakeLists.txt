@@ -39,7 +39,9 @@ add_executable(game_exe
     ui/Renderer.cpp
     ui/Window.cpp
     ui/HUD.cpp
-    ui/ActionBar.cpp
+
+    ui/components/ActionBar.cpp
+    ui/components/Spellbook.cpp
 
     utils/Collision.cpp
     utils/Settings.cpp
