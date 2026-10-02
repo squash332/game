@@ -3,6 +3,15 @@
 HUD::HUD()
 {
     Settings settings = loadSettings(SETTINGS_PATH);
+    
+    buildSettingsHUD(settings);
+}
+
+HUD::~HUD()
+{
+}
+
+void HUD::buildSettingsHUD(Settings &settings) {
     player_frame_ = settings.player_frame_config;
     targeted_frame_ = settings.targeted_frame_config;
     settings_window_.height = VIRTUAL_HEIGHT / 2;
@@ -10,10 +19,6 @@ HUD::HUD()
     settings_window_.x = VIRTUAL_WIDTH / 2 - settings_window_.width / 2;
     settings_window_.y = VIRTUAL_HEIGHT / 2 - settings_window_.height / 2;
     edit_mode_button_ = {{settings_window_.x + BTN_PADDING, settings_window_.y + BTN_PADDING, settings_window_.width - BTN_PADDING * 2, settings_window_.height / NR_OF_OPTIONS}, "Edit mode"};
-}
-
-HUD::~HUD()
-{
 }
 
 // Draws the player's frame, containing icon, stats, castbar

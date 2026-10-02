@@ -5,6 +5,9 @@
 
 using json = nlohmann::json;
 
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Keybind, key, shift, ctrl, alt);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SlotConfig, keybind, ability_id);
+
 void to_json(json &j, const Rectangle &r)
 {
     j = json{{"x", r.x}, {"y", r.y}, {"width", r.width}, {"height", r.height}};
@@ -24,6 +27,7 @@ void saveSettings(const Settings &settings, const std::string &path)
     j["player_frame_config"] = settings.player_frame_config;
     j["target_frame_config"] = settings.targeted_frame_config;
     j["action_bar_config"] = settings.action_bar_config;
+    j["slots_config"] = settings.slots_config;
 
     std::ofstream file(path);
     file << j.dump(4);
@@ -43,5 +47,7 @@ Settings loadSettings(const std::string &path)
     if (j.contains("action_bar_config"))
         settings.action_bar_config = j["action_bar_config"].get<Rectangle>();
 
+    if (j.contains("slots_config"))
+        settings.slots_config = j["slots_config"].get<std::vector<SlotConfig>>();
     return settings;
 }

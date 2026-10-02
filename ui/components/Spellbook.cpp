@@ -14,7 +14,7 @@ void Spellbook::loadForClass(PlayerClass playerClass)
     case PlayerClass::Warrior:
         abilities_ = {
             Ability{
-                .id = 0,
+                .id = 1,
                 .name = "Slash",
                 .icon = LoadTexture("res/slash.png"),
                 .description = "A quick melee attack that deals damage.",
@@ -24,7 +24,7 @@ void Spellbook::loadForClass(PlayerClass playerClass)
             },
 
             Ability{
-                .id = 1,
+                .id = 2,
                 .name = "Clap",
                 .icon = LoadTexture("res/clap.png"),
                 .description = "An AoE attack that deals damage to multiple enemies.",

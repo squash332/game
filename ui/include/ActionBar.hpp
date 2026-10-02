@@ -6,20 +6,10 @@
 #include "Mouse.hpp"
 #include "Settings.hpp"
 #include "Ability.hpp"
+#include "Slot.hpp"
 
 #include "raylib.h"
 
-struct Slot
-{
-    Ability* ability = nullptr;
-    Keybind keybind{};
-    float size = ABILITY_ICON_SIZE;
-
-    bool empty() const
-    {
-        return ability == nullptr;
-    }
-};
 
 class ActionBar
 {
@@ -29,7 +19,7 @@ public:
 
     void startAbilityCooldown(Ability &ability);
     void updateCooldowns(float delta);
-    void buildDefaultActionBar(Spellbook &spellbook);
+    void buildDefaultActionBar();
     void draw();
     void handleBarClick();
     void handleDrag();

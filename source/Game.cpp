@@ -16,6 +16,7 @@ Game::Game()
       cached_focus_frame_{0},
       save_btn_{0},
       discard_btn_{0},
+      settings_{0},
       cached_action_bar_{0}
 {
     enemies_.push_back(std::make_unique<Enemy>("knight"));
@@ -317,7 +318,7 @@ void Game::handleDebugMode()
 // function called in lambda on pressing ESC key button
 void Game::handleEscapeKey()
 {
-    // first remove current target, then on another 'ESC' click open the settings menu
+    // first remove current target, then on another 'ESC' click open the settings_ menu
     if (current_target != nullptr)
     {
         current_target = nullptr;
@@ -407,16 +408,15 @@ void Game::endEditMode(bool save)
 
     if (save)
     {
-        Settings settings;
-        settings.player_frame_config = hud_.getPlayerFrame();
-        settings.targeted_frame_config = hud_.getTargetFrame();
-        settings.action_bar_config = action_bar_.getActionBar();
-        saveSettings(settings, SETTINGS_PATH);
-        std::cout << "saved new settings!" << std::endl;
+        settings_.player_frame_config = hud_.getPlayerFrame();
+        settings_.targeted_frame_config = hud_.getTargetFrame();
+        settings_.action_bar_config = action_bar_.getActionBar();
+        saveSettings(settings_, SETTINGS_PATH);
+        std::cout << "saved new settings_!" << std::endl;
         return;
     }
     hud_.setPlayerFramePos(cached_player_frame_);
     hud_.setTargetFramePos(cached_target_frame_);
     action_bar_.setActionBarPos(cached_action_bar_);
-    std::cout << "discarding new settings!" << std::endl;
+    std::cout << "discarding new settings_!" << std::endl;
 }

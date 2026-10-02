@@ -1,36 +1,36 @@
 #include "ActionBar.hpp"
 
-ActionBar::ActionBar( Player &player) : rows_(1), cols_(5), iconPadding_(5), grabbed_slot_(-1), slots_(rows_ * cols_)
+ActionBar::ActionBar(Player &player) : rows_(1), cols_(5), iconPadding_(5), grabbed_slot_(-1), slots_(rows_ * cols_)
 {
-    slots_[0].keybind.key = KEY_ONE;
-    slots_[1].keybind.key = KEY_TWO;
-    slots_[2].keybind.key = KEY_THREE;
-
     Settings settings = loadSettings(SETTINGS_PATH);
 
     if (settings.action_bar_config.width == 0 && settings.action_bar_config.height == 0)
-    {
-        buildDefaultActionBar(player.getSpellbook());
-    }
+        buildDefaultActionBar();
     else
-    {
         action_bar_ = settings.action_bar_config;
+
+    for (auto i = 0; i < settings.slots_config.size(); i++)
+    {
+
+        slots_[i].keybind = settings.slots_config[i].keybind;
+        int id = settings.slots_config[i].ability_id;
+
+        if (id != 0)
+            slots_[i].ability = player.getSpellbook().getAbility(id);
     }
 
     std::cout << "action bar constructed" << std::endl;
 }
 
-void ActionBar::startAbilityCooldown(Ability& ability)
+void ActionBar::startAbilityCooldown(Ability &ability)
 {
     ability.cooldown_remaining = ability.cooldown;
 }
 
-
-
 void ActionBar::updateCooldowns(float delta)
 {
-    for (auto& slot : slots_)
-    {   
+    for (auto &slot : slots_)
+    {
         // if slot is empty just insta skip it, we dont care about it dont access it (seg fault)
         if (slot.empty())
             continue;
@@ -43,8 +43,7 @@ void ActionBar::updateCooldowns(float delta)
     }
 }
 
-
-void ActionBar::buildDefaultActionBar(Spellbook &spellbook)
+void ActionBar::buildDefaultActionBar()
 {
     const float slotSize = slots_[0].size;
     float totalWidth = cols_ * slotSize + (cols_ + 1) * iconPadding_;
@@ -56,11 +55,6 @@ void ActionBar::buildDefaultActionBar(Spellbook &spellbook)
         totalWidth,
         totalHeight};
 
-    if (auto* slash = spellbook.getAbility(0))
-        slots_[0].ability = slash;
-    
-    if (auto* clap = spellbook.getAbility(1)) 
-        slots_[1].ability = clap;
 }
 
 void ActionBar::draw()
@@ -130,15 +124,17 @@ int ActionBar::handleAbilitySwap(Player &player)
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             grabbed_slot_ = getHoveredSlot();
     }
-    // TODO : 
+    // TODO :
     // remove the grabbed slot ability icon when grabbed slot is filled
     // handle dropped being not in the action bar (remove grabbed slot, assign ability to empty)
-    
+
     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && grabbed_slot_ != -1)
     {
         int dropped = getHoveredSlot();
-        if (dropped != -1 && dropped != grabbed_slot_)
+        if (dropped != -1 && dropped != grabbed_slot_) {
             reArrangeSlots(grabbed_slot_, dropped);
+
+        }
 
         grabbed_slot_ = -1;
     }
@@ -177,7 +173,7 @@ int ActionBar::getHoveredSlot() const
     {
         if (CheckCollisionPointRec(mouse, getSlotBounds(i)))
         {
-            std::cout << "clicked slot number: " << i << std::endl;
+            // std::cout << "clicked slot number: " << i << std::endl;
             return (int)i;
         }
     }
@@ -222,7 +218,8 @@ Ability *ActionBar::getAbility(int slotIndex)
 
 void ActionBar::setAbility(int slotIndex, Ability &ability)
 {
-    if (slotIndex < 0 || slotIndex >= static_cast<int>(slots_.size())) return;
+    if (slotIndex < 0 || slotIndex >= static_cast<int>(slots_.size()))
+        return;
 
     slots_[slotIndex].ability = &ability;
 }

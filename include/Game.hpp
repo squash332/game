@@ -82,6 +82,7 @@ private:
 
   Button save_btn_;
   Button discard_btn_;
+  Settings settings_;
 
   std::vector<std::unique_ptr<Enemy>> enemies_;
 

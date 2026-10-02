@@ -26,6 +26,7 @@ public:
     HUD(const HUD &other) = delete;
     ~HUD();
 
+    void buildSettingsHUD(Settings &settings);
     void drawPlayerFrame(const Player &other);
     void drawTargetedFrame(const Entity &other);
     // void drawFocusFrame(const Entity &other);

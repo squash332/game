@@ -3,13 +3,25 @@
 #include "Constants.hpp"
 
 #include "raylib.h"
+#include "Ability.hpp"
+
 #include <string>
 
+struct SlotConfig
+{
+    Keybind keybind{};
+    int ability_id{};
+};
 struct Settings
 {
     Rectangle player_frame_config = {10.0f, 10.0f, 80.0f, 20.0f};
     Rectangle targeted_frame_config = {100.0f, 10.0f, 80.0f, 20.0f};
     Rectangle action_bar_config = {0.0f, 0.0f, 0.0f, 0.0f};
+    std::vector<SlotConfig> slots_config = {
+        {{KEY_ONE}, 1},
+        {{KEY_TWO}, 2},
+        {{KEY_THREE}, 0} 
+    };
 };
 
 void saveSettings(const Settings &settings, const std::string &path);
