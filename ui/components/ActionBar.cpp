@@ -29,12 +29,12 @@ void ActionBar::startAbilityCooldown(Ability &ability)
 
 void ActionBar::updateCooldowns(float delta)
 {
+    // when spellbook fully implemented, fix subtracting remaining cd on abilities, make it independent (if 2 abilities, cd is halved and not yet shared)
     for (auto &slot : slots_)
     {
         // if slot is empty just insta skip it, we dont care about it dont access it (seg fault)
         if (slot.empty())
             continue;
-
         if (slot.ability->cooldown_remaining > 0.0f)
             slot.ability->cooldown_remaining -= delta;
 
@@ -56,7 +56,7 @@ void ActionBar::buildDefaultActionBar()
         totalHeight};
 }
 
-void ActionBar::draw()
+void ActionBar::draw(float gcd, float gcdRemaining)
 {
 
     DrawRectangleRec(action_bar_, COLOR_WINDOW_BG);
@@ -72,6 +72,14 @@ void ActionBar::draw()
 
             DrawTextureV(slot.ability->icon, {bounds.x, bounds.y}, WHITE);
             drawCooldown(bounds, *slot.ability, i);
+        }
+
+        if (!slot.empty() && !slot.ability->off_global_cooldown && gcdRemaining > 0.0f)
+        {
+            float gcd_fraction = gcdRemaining / gcd;
+            float overlay_height = slots_[i].size * gcd_fraction;
+            DrawRectangle(bounds.x, bounds.y + (slots_[i].size  - overlay_height),
+                          slots_[i].size , overlay_height, Fade(WHITE, 0.3f));
         }
 
         drawKeybind(bounds, i);

@@ -47,8 +47,10 @@ public:
   void tryMove();
   void updateEnemies();
   void updateTargetRange();
-  bool canAttack();
-  void handleAbilityCast(Ability &ability);
+  bool canAttackCurrentTarget(const Ability &ability);
+  bool canAct(const Ability &ability);
+  void handleNonTargetedAbilityCast(Ability &ability);
+  void handleTargetedAbilityCast(Ability &ability);
 
   void handleDebugMode(); // open with 'T' keybind
   void handleEscapeKey();
@@ -86,6 +88,7 @@ private:
   Settings settings_;
 
   std::vector<std::unique_ptr<Enemy>> enemies_;
+  MeleeRangeCircle player_circle_;
 
   float timer = 0.0f;
   float delta_time = 0.0f;

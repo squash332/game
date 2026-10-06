@@ -18,19 +18,25 @@ public:
     AnimationState getAnimState() const { return anim_state_; }
     bool isAttacking() const { return is_attacking_; }
     int getAttackStartFrame() const { return attack_start_frame_; }
+    float getRemainingGCD() const;
+    float getDurationGCD() const;
+    Direction getCurrentDirection() const;
+    void startGCD();
 
     void attack(Direction dir, AbilityAnim animType);
     AnimationState getAttackAnimState(Direction dir, AbilityAnim animType);
     Spellbook& getSpellbook();
 
-    int frame_number_ = 0;
+    int frame_number_;
 private:
     std::string name_;
     AnimationState anim_state_;
-    Direction last_direction_ = Direction::None;
+    Direction last_direction_;
     Spellbook spellbook_;
     PlayerClass player_class_;
-    bool is_attacking_ = false;
-    float attack_timer_ = 0.0f;
-    int attack_start_frame_ = 0;
+    bool is_attacking_;
+    float attack_timer_;
+    float global_cooldown_duration_;
+    float global_cooldown_remaining_;
+    int attack_start_frame_;
 };

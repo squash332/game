@@ -4,9 +4,15 @@
 
 Player::Player(std::string name, PlayerClass playerClass)
     : Entity(50.0f, 150.0f, true, SPRITE_WIDTH, SPRITE_HEIGHT, HITBOX_WIDTH, HITBOX_HEIGHT, MeleeRangeCircle{}),
+      frame_number_{0},
       name_(name),
       anim_state_(AnimationState::IdleDown),
-      player_class_(playerClass)
+      last_direction_(Direction::None),
+      player_class_(playerClass),
+      is_attacking_(false),
+      attack_timer_(0.0f),
+      global_cooldown_duration_(1.0f),
+      global_cooldown_remaining_(0.0f)
 {
     std::cout << "player constructor ran" << std::endl;
     std::cout << "player width: " << hitbox_width_ << std::endl;
@@ -27,7 +33,13 @@ void Player::update(float delta, int frame)
             is_attacking_ = false;
         }
     }
-    // need to adjust which frame to draw based on state: idle or moving or attacking
+
+    if (global_cooldown_remaining_ > 0.0f)
+        global_cooldown_remaining_ -= delta;
+
+    if (global_cooldown_remaining_ < 0.0f)
+            global_cooldown_remaining_ = 0.0f;
+
     next_x_ = x_;
     next_y_ = y_;
 
@@ -111,6 +123,26 @@ void Player::update(float delta, int frame)
         }
     }
     direction_ = Direction::None;
+}
+
+float Player::getRemainingGCD() const
+{
+    return global_cooldown_remaining_;
+}
+
+float Player::getDurationGCD() const
+{
+    return global_cooldown_duration_;
+}
+
+Direction Player::getCurrentDirection() const
+{
+    return direction_;
+}
+
+void Player::startGCD()
+{   
+    global_cooldown_remaining_ = global_cooldown_duration_;
 }
 
 void Player::attack(Direction dir, AbilityAnim animType)

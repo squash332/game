@@ -20,7 +20,7 @@ public:
     void startAbilityCooldown(Ability &ability);
     void updateCooldowns(float delta);
     void buildDefaultActionBar();
-    void draw();
+    void draw(float globalCooldown, float globalCooldownRemaining);
     void handleBarClick();
     void handleDrag();
     void updateEditModeComponents();

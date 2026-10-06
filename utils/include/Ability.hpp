@@ -26,6 +26,8 @@ struct Ability
     float cooldown = 0.0f;
     AbilityAnim animType = AbilityAnim::Slash;
     float cooldown_remaining = 0.0f;
+    bool off_global_cooldown = false;
+    bool requiresTarget = true;
 };
 
 inline std::string keyToString(int key)

@@ -17,7 +17,8 @@ Game::Game()
       save_btn_{0},
       discard_btn_{0},
       settings_{},
-      cached_action_bar_{0}
+      cached_action_bar_{0},
+      player_circle_{0}
 {
     enemies_.push_back(std::make_unique<Enemy>("knight"));
 
@@ -84,7 +85,7 @@ void Game::run()
         cam_.endFrame();
         // end camera
 
-        action_bar_.draw();
+        action_bar_.draw(player_.getDurationGCD(), player_.getRemainingGCD());
         hud_.drawPlayerFrame(player_);
         if (current_target != nullptr)
             hud_.drawTargetedFrame(*current_target);
@@ -155,7 +156,7 @@ void Game::handleAbilityClick()
 
     Ability *ability = action_bar_.getAbility(slot);
     if (ability)
-        handleAbilityCast(*ability);
+        handleTargetedAbilityCast(*ability);
 }
 
 void Game::handleTargetClick()
@@ -241,24 +242,91 @@ void Game::updateTargetRange()
     player_.setMeleeRange(in_range);
 }
 
-// handles cast for 1 specific ability
-void Game::handleAbilityCast(Ability &ability)
+/**
+ * @brief Checks if conditions are met for attacking (GCD, CD, target, range, hostility)
+ * @returns True if met, False if not.
+ */
+bool Game::canAttackCurrentTarget(const Ability &ability)
 {
-    if (ability.cooldown_remaining != 0)
-        return;
-    if (!canAttack())
+    if (!canAct(ability))
+        return false;
+
+    if (ability.requiresTarget)
+    {
+        if (current_target == nullptr)
+        {
+            std::cout << "You don't have a target." << std::endl;
+            return false;
+        }
+        if (current_target->is_ally_ == true)
+        {
+            std::cout << "Current target is not hostile." << std::endl;
+            return false;
+        }
+        if (!player_.isInMeleeRange())
+        {
+            std::cout << "You are out of range." << std::endl;
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool Game::canAct(const Ability &ability)
+{
+
+    // without this, spamming the ability fast removes the target's hp even though player attacked once
+    if (player_.isAttacking())
+        return false;
+
+    // GCD checker
+    if (player_.getRemainingGCD() > 0.0f && !ability.off_global_cooldown)
+        return false;
+
+    if (ability.cooldown_remaining > 0)
+        return false;
+
+    return true;
+}
+
+void Game::handleNonTargetedAbilityCast(Ability &ability)
+{
+    if (!canAct(ability))
         return;
 
-    MeleeRangeCircle player_circle = player_.getMeleeHitbox();
+    player_circle_ = player_.getMeleeHitbox();
+    player_.attack(player_.getCurrentDirection(), ability.animType);
+    action_bar_.startAbilityCooldown(ability);
+
+    for (auto &enemy : enemies_)
+    {
+        MeleeRangeCircle enemy_circle = enemy->getMeleeHitbox();
+        if (CheckCollisionCircles(player_circle_.center, player_circle_.radius, enemy_circle.center, enemy_circle.radius))
+        {
+            enemy->takeDamage(ability.damage);
+        }
+    }
+}
+
+/**
+ * @brief Takes in an ability reference, attacks current target if all requirements are met.
+ */
+void Game::handleTargetedAbilityCast(Ability &ability)
+{
+    if (!canAttackCurrentTarget(ability))
+        return;
+
+    player_circle_ = player_.getMeleeHitbox();
     MeleeRangeCircle target_circle = current_target->getMeleeHitbox();
-    Direction facing = getDirectionToTarget(player_circle.center.x, player_circle.center.y, target_circle.center.x, target_circle.center.y);
+    Direction facing = getDirectionToTarget(player_circle_.center.x, player_circle_.center.y, target_circle.center.x, target_circle.center.y);
 
     player_.attack(facing, ability.animType);
     current_target->takeDamage(ability.damage);
     action_bar_.startAbilityCooldown(ability);
 }
 
-// delegates cast to handleAbilityCast()
+// delegates cast to handleTargetedAbilityCast()
 void Game::handleAbilityInput()
 {
     const auto &slots = action_bar_.getSlots();
@@ -267,36 +335,19 @@ void Game::handleAbilityInput()
     {
         if (!slots[i].empty() && IsKeyPressed(slots[i].keybind.key))
         {
-            handleAbilityCast(*slots[i].ability);
+            if (slots[i].ability->requiresTarget)
+                handleTargetedAbilityCast(*slots[i].ability);
+            else
+            {
+                handleNonTargetedAbilityCast(*slots[i].ability);
+            }
+
+            if (!slots[i].ability->off_global_cooldown && player_.getRemainingGCD() == 0.0f) // TODO :: fix GCD to not trigger when attacks dont connect
+                player_.startGCD();
+
             return;
         }
     }
-}
-
-bool Game::canAttack()
-{
-    // without this, spamming the ability fast removes the target's hp even though player attacked once
-    if (player_.isAttacking())
-    {
-        return false;
-    }
-    if (current_target == nullptr)
-    {
-        std::cout << "You don't have a target." << std::endl;
-        return false;
-    }
-    if (current_target->is_ally_ == true)
-    {
-        std::cout << "Current target is not hostile." << std::endl;
-        return false;
-    }
-    if (!player_.isInMeleeRange() && current_target != nullptr)
-    {
-        std::cout << "You are out of range." << std::endl;
-        return false;
-    }
-
-    return true;
 }
 
 void Game::handleDebugMode()

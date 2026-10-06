@@ -29,8 +29,9 @@ void Spellbook::loadForClass(PlayerClass playerClass)
                 .icon = LoadTexture("res/clap.png"),
                 .description = "An AoE attack that deals damage to multiple enemies.",
                 .damage = 10,
-                .cooldown = 5.0f,
-                .animType = AbilityAnim::Clap
+                .cooldown = 0.0f,
+                .animType = AbilityAnim::Clap,
+                .requiresTarget = false
             }
         };
         break;
