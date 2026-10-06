@@ -16,7 +16,7 @@ Game::Game()
       cached_focus_frame_{0},
       save_btn_{0},
       discard_btn_{0},
-      settings_{0},
+      settings_{},
       cached_action_bar_{0}
 {
     enemies_.push_back(std::make_unique<Enemy>("knight"));
@@ -97,7 +97,7 @@ void Game::run()
         game_window_.endFrame();
         // end drawing
     }
-} 
+}
 
 void Game::handleLeftMouseClick()
 {
@@ -150,10 +150,12 @@ void Game::handleAbilityClick()
 
     int slot = action_bar_.getHoveredSlot();
 
-    if (slot == -1) return;
+    if (slot == -1)
+        return;
 
-    Ability* ability = action_bar_.getAbility(slot);
-    if (ability) handleAbilityCast(*ability);
+    Ability *ability = action_bar_.getAbility(slot);
+    if (ability)
+        handleAbilityCast(*ability);
 }
 
 void Game::handleTargetClick()
@@ -377,7 +379,18 @@ void Game::updateUI()
         action_bar_.updateEditModeComponents();
         return;
     }
-    action_bar_.handleAbilitySwap(player_);
+    if (!action_bar_.handleAbilitySwap(player_))
+        return;
+
+    saveModifiedSlotsToSettings();
+}
+
+void Game::saveModifiedSlotsToSettings()
+{
+    Settings new_settings = loadSettings(SETTINGS_PATH);
+
+    new_settings.slots_config = action_bar_.getSlotConfigs();
+    saveSettings(new_settings, SETTINGS_PATH);
 }
 
 void Game::drawEditMode()

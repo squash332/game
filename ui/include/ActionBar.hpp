@@ -24,7 +24,8 @@ public:
     void handleBarClick();
     void handleDrag();
     void updateEditModeComponents();
-    int handleAbilitySwap(Player &player);
+    bool handleAbilitySwap(Player &player);
+    std::vector<SlotConfig> getSlotConfigs() const;
     void reArrangeSlots(int first, int second);
 
     void setActionBarPos(Rectangle pos);
@@ -33,7 +34,7 @@ public:
     Rectangle getActionBar() const;
     Rectangle getSlotBounds(int index) const;
     Keybind getSlotKeybind(int index) const;
-    const std::vector<Slot> getSlots() const;
+    const std::vector<Slot>& getSlots() const;
     Ability* getAbility(int slotIndex);
     void setAbility(int slotIndex, Ability &ability);
 

@@ -54,7 +54,6 @@ void ActionBar::buildDefaultActionBar()
         VIRTUAL_HEIGHT - totalHeight,
         totalWidth,
         totalHeight};
-
 }
 
 void ActionBar::draw()
@@ -68,7 +67,7 @@ void ActionBar::draw()
         const Rectangle bounds = getSlotBounds(i);
 
         // assign an ability to a slot with a certain keybind
-        if (!slot.empty())
+        if (!slot.empty() && i != grabbed_slot_)
         {
 
             DrawTextureV(slot.ability->icon, {bounds.x, bounds.y}, WHITE);
@@ -112,9 +111,9 @@ void ActionBar::handleDrag()
 
 /***
  * @brief Swaps abilities if player Shift clicks and holds LMB drags it to a valid position.
- * @returns Index of the slot in the action bar or -1 for returning
+ * @returns True or False based on if a change in abilities happened.
  */
-int ActionBar::handleAbilitySwap(Player &player)
+bool ActionBar::handleAbilitySwap(Player &player)
 {
     // by having only this block in HOLDING_SHIFT, we can move the ability without holding shift the entire time
     // previously by having all the code in the if block, player would have a hanging icon to his cursor
@@ -124,22 +123,44 @@ int ActionBar::handleAbilitySwap(Player &player)
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             grabbed_slot_ = getHoveredSlot();
     }
-    // TODO :
-    // remove the grabbed slot ability icon when grabbed slot is filled
-    // handle dropped being not in the action bar (remove grabbed slot, assign ability to empty)
 
-    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && grabbed_slot_ != -1)
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT))
     {
-        int dropped = getHoveredSlot();
-        if (dropped != -1 && dropped != grabbed_slot_) {
-            reArrangeSlots(grabbed_slot_, dropped);
+        if (grabbed_slot_ == -1)
+            return false;
 
+        // ability dropped on another ability -> swap them
+        int dropped = getHoveredSlot();
+        if (dropped != -1 && dropped != grabbed_slot_)
+        {
+            reArrangeSlots(grabbed_slot_, dropped);
+            grabbed_slot_ = -1;
+            return true;
+        }
+
+        // ability dropped outside of any slot -> remove current ability from bar
+        if (dropped == -1)
+        {
+            slots_[grabbed_slot_].ability = nullptr;
+            grabbed_slot_ = -1;
+            return true;
         }
 
         grabbed_slot_ = -1;
     }
 
-    return -1;
+    return false;
+}
+
+std::vector<SlotConfig> ActionBar::getSlotConfigs() const
+{
+    std::vector<SlotConfig> configs;
+    for (const auto &slot : slots_)
+    {
+        int id = slot.empty() ? 0 : slot.ability->id;
+        configs.push_back({slot.keybind, id});
+    }
+    return configs;
 }
 
 void ActionBar::reArrangeSlots(int first, int second)
@@ -203,7 +224,7 @@ Keybind ActionBar::getSlotKeybind(int index) const
     return {};
 }
 
-const std::vector<Slot> ActionBar::getSlots() const
+const std::vector<Slot> &ActionBar::getSlots() const
 {
     return slots_;
 }

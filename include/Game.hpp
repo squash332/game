@@ -59,6 +59,7 @@ public:
   bool in_edit_mode;
   void cachePositions();
   void updateUI();
+  void saveModifiedSlotsToSettings();
   void drawEditMode();
   void endEditMode(bool save);
 
