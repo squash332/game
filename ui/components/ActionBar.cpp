@@ -69,17 +69,8 @@ void ActionBar::draw(float gcd, float gcdRemaining)
         // assign an ability to a slot with a certain keybind
         if (!slot.empty() && i != grabbed_slot_)
         {
-
             DrawTextureV(slot.ability->icon, {bounds.x, bounds.y}, WHITE);
-            drawCooldown(bounds, *slot.ability, i);
-        }
-
-        if (!slot.empty() && !slot.ability->off_global_cooldown && gcdRemaining > 0.0f)
-        {
-            float gcd_fraction = gcdRemaining / gcd;
-            float overlay_height = slots_[i].size * gcd_fraction;
-            DrawRectangle(bounds.x, bounds.y + (slots_[i].size  - overlay_height),
-                          slots_[i].size , overlay_height, Fade(WHITE, 0.3f));
+            drawCooldown(bounds, *slot.ability, i, gcd, gcdRemaining);
         }
 
         drawKeybind(bounds, i);
@@ -252,31 +243,42 @@ void ActionBar::setAbility(int slotIndex, Ability &ability)
 
     slots_[slotIndex].ability = &ability;
 }
-
-void ActionBar::drawCooldown(Rectangle bounds, const Ability &ability, int i)
+/**
+ * @brief Draws cooldown on non off-GCD abilities, if GCD is <= ability cooldown, skips drawing the ability cooldown.
+ */
+void ActionBar::drawCooldown(Rectangle bounds, const Ability &ability, int i, float gcd, float gcdRemaining)
 {
-    if (ability.cooldown_remaining <= 0.0f)
+    float size = slots_[i].size;
+
+    float gcdLeft = ability.off_global_cooldown ? 0.0f : gcdRemaining;
+    bool useAbilityCD = ability.cooldown_remaining >= gcdLeft;
+    float remaining = useAbilityCD ? ability.cooldown_remaining : gcdLeft;
+
+    if (remaining <= 0.0f)
         return;
 
-    const float fraction = ability.cooldown_remaining / ability.cooldown;
+    float total = useAbilityCD ? ability.cooldown : gcd;
 
-    const float overlayHeight = slots_[i].size * fraction;
+    const float overlayHeight = slots_[i].size * (remaining / total);
 
     DrawRectangle(
         bounds.x,
-        bounds.y + slots_[i].size - overlayHeight,
-        slots_[i].size,
+        bounds.y + size - overlayHeight,
+        size,
         overlayHeight,
         Fade(BLACK, 0.6f));
 
-    const std::string text = std::to_string(static_cast<int>(std::ceil(ability.cooldown_remaining)));
+    if (useAbilityCD)
+    {
+        std::string text = std::to_string((int)std::ceil(remaining));
+        int fontSize = size / 3;
+        int textWidth = MeasureText(text.c_str(), fontSize);
 
-    DrawText(
-        text.c_str(),
-        bounds.x + slots_[i].size / 2 - 4,
-        bounds.y + slots_[i].size / 2 - 4,
-        10,
-        WHITE);
+        float textX = bounds.x + (size - textWidth) / 2.0f;
+        float textY = bounds.y + (size - fontSize) / 2.0f;
+
+        DrawText(text.c_str(), (int)textX, (int)textY, fontSize, WHITE);
+    }
 }
 
 void ActionBar::drawKeybind(Rectangle bounds, int i)

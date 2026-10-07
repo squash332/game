@@ -137,7 +137,7 @@ float Player::getDurationGCD() const
 
 Direction Player::getCurrentDirection() const
 {
-    return direction_;
+    return last_direction_;
 }
 
 void Player::startGCD()

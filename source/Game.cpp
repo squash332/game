@@ -298,6 +298,7 @@ void Game::handleNonTargetedAbilityCast(Ability &ability)
     player_circle_ = player_.getMeleeHitbox();
     player_.attack(player_.getCurrentDirection(), ability.animType);
     action_bar_.startAbilityCooldown(ability);
+    player_.startGCD();
 
     for (auto &enemy : enemies_)
     {
@@ -324,6 +325,7 @@ void Game::handleTargetedAbilityCast(Ability &ability)
     player_.attack(facing, ability.animType);
     current_target->takeDamage(ability.damage);
     action_bar_.startAbilityCooldown(ability);
+    player_.startGCD();
 }
 
 // delegates cast to handleTargetedAbilityCast()
@@ -341,9 +343,6 @@ void Game::handleAbilityInput()
             {
                 handleNonTargetedAbilityCast(*slots[i].ability);
             }
-
-            if (!slots[i].ability->off_global_cooldown && player_.getRemainingGCD() == 0.0f) // TODO :: fix GCD to not trigger when attacks dont connect
-                player_.startGCD();
 
             return;
         }

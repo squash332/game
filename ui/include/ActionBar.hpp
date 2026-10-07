@@ -10,11 +10,10 @@
 
 #include "raylib.h"
 
-
 class ActionBar
 {
 public:
-    ActionBar( Player &player);
+    ActionBar(Player &player);
     ~ActionBar() = default;
 
     void startAbilityCooldown(Ability &ability);
@@ -34,12 +33,12 @@ public:
     Rectangle getActionBar() const;
     Rectangle getSlotBounds(int index) const;
     Keybind getSlotKeybind(int index) const;
-    const std::vector<Slot>& getSlots() const;
-    Ability* getAbility(int slotIndex);
+    const std::vector<Slot> &getSlots() const;
+    Ability *getAbility(int slotIndex);
     void setAbility(int slotIndex, Ability &ability);
 
 private:
-    void drawCooldown(Rectangle rec, const Ability &ability, int index);
+    void drawCooldown(Rectangle rec, const Ability &ability, int index, float gcd, float gcdRemaining);
     void drawKeybind(Rectangle rec, int index);
 
 private:
