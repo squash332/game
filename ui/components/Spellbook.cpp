@@ -2,10 +2,10 @@
 
 Spellbook::Spellbook() : spellbook_box_{0}
 {
-    spellbook_box_.height = (VIRTUAL_HEIGHT / 3) * 2;
+    spellbook_box_.height = VIRTUAL_HEIGHT * 2/3;
     spellbook_box_.width = VIRTUAL_WIDTH / 2;
     spellbook_box_.x = BTN_PADDING;
-    spellbook_box_.y = VIRTUAL_HEIGHT / 2 + spellbook_box_.height / 2;
+    spellbook_box_.y = spellbook_box_.height / 4;
 
     std:: cout <<"created spellbook !!"<< spellbook_box_.height << " "<< spellbook_box_.width << std::endl;
 }
@@ -59,6 +59,7 @@ void Spellbook::draw()
     // spellbook size: width, about a third of screen width, height : 2/3's of screen height, centered in the middle
     // draw texture that resembles a spellbook i guess ? sta
     DrawRectangleRec(spellbook_box_, COLOR_WINDOW_BG);
+    
 }
 
 Ability *Spellbook::getAbility(int id)

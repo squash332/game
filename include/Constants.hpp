@@ -32,7 +32,7 @@ constexpr int ENEMY_SPRITE_WIDTH = 16;
 constexpr int ENEMY_SPRITE_HEIGHT = 32;
 
 // ABILITY icons
-#define ABILITY_ICON_SIZE 36.0f
+#define ABILITY_ICON_SIZE 32.0f
 #define ABILITY_ICON_SIZE_VECTOR {32, 32}
 
 // PATHS

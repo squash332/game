@@ -69,9 +69,11 @@ void ActionBar::draw(float gcd, float gcdRemaining)
         // assign an ability to a slot with a certain keybind
         if (!slot.empty() && i != grabbed_slot_)
         {
-            DrawTextureV(slot.ability->icon, {bounds.x, bounds.y}, WHITE);
+            DrawTextureV(slot.ability->icon, {floorf(bounds.x), floorf(bounds.y)}, WHITE);
             drawCooldown(bounds, *slot.ability, i, gcd, gcdRemaining);
         }
+        else
+            DrawRectangleRec(bounds, Fade(RED, 0.4f));
 
         drawKeybind(bounds, i);
     }
@@ -261,11 +263,15 @@ void ActionBar::drawCooldown(Rectangle bounds, const Ability &ability, int i, fl
 
     const float overlayHeight = slots_[i].size * (remaining / total);
 
+    int top = (int)floorf(bounds.y + size - overlayHeight);
+    int bottom = (int)floorf(bounds.y + size);
+    int height = bottom - top;
+
     DrawRectangle(
-        bounds.x,
-        bounds.y + size - overlayHeight,
-        size,
-        overlayHeight,
+        int(floorf(bounds.x)),
+        top,
+        int(size),
+        height,
         Fade(BLACK, 0.6f));
 
     if (useAbilityCD)
