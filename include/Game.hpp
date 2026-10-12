@@ -63,6 +63,10 @@ public:
   void handleDebugMode(); // open with 'T' keybind
   void handleEscapeKey();
   bool isWindowActive(UIWindow window) const;
+  void handleDisplayedComponentsUI();
+  void renderWorldComponents();
+  void updateDeltaTime();
+  void handlePressedUIComponentKeybind(KeyboardKey keybind);
 
   // HUD relevant
   void handleMenuClick();

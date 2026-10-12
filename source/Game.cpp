@@ -35,6 +35,8 @@ Game::Game()
                        { toggleDebugMode(); });
     input_.bindPressed(KEY_ESCAPE, [this]
                        { handleEscapeKey(); });
+    input_.bindPressed(KEY_P, [this]
+                       { handlePressedUIComponentKeybind(KEY_P);});
 }
 
 void Game::run()
@@ -42,23 +44,10 @@ void Game::run()
     while (!game_window_.shouldClose())
     {
         updateMouse();
-
-        delta_time = GetFrameTime();
-        timer += delta_time;
-        if (timer >= 0.1f)
-        {
-            timer = 0.0f;
-            frame++;
-        }
+        updateDeltaTime();
         updateTargetRange();
         updateUI();
         action_bar_.updateCooldowns(delta_time);
-
-        // make sure changes are discarded ALSO when player presses ESC
-        if (isWindowActive(UIWindow::EditMode) && IsKeyPressed(KEY_ESCAPE))
-        {
-            endEditMode(false);
-        }
 
         input_.update();
         player_.update(delta_time, frame);
@@ -68,34 +57,18 @@ void Game::run()
         cam_.update(player_.getX(), player_.getY(), delta_time);
         handleLeftMouseClick();
 
-        // start drawing
-        game_window_.beginFrame();
+        game_window_.beginFrame(); // start drawing
         ClearBackground(BLACK);
 
-        // start camera
-        cam_.beginFrame();
-
-        renderer_.drawMap(map_);
-        renderer_.drawNameplate(player_);
-        renderer_.drawPlayer(player_);
-
+        cam_.beginFrame(); // start camera
+        renderWorldComponents();
         updateEnemies();
         handleDebugMode();
-        cam_.endFrame();
-        // end camera
+        cam_.endFrame(); // end camera
 
-        action_bar_.draw(player_.getDurationGCD(), player_.getRemainingGCD());
-        hud_.drawPlayerFrame(player_);
-        if (current_target != nullptr)
-            hud_.drawTargetedFrame(*current_target);
-        if (isWindowActive(UIWindow::Settings))
-            hud_.drawSettingsWindow();
-        if (isWindowActive(UIWindow::EditMode))
-            drawEditMode();
-
+        handleDisplayedComponentsUI();
         displayLogs();
-        game_window_.endFrame();
-        // end drawing
+        game_window_.endFrame(); // end drawing
     }
 }
 
@@ -381,12 +354,69 @@ void Game::handleEscapeKey()
     else
         active_windows_.erase(UIWindow::Settings);
 
-    active_windows_.erase(UIWindow::EditMode);
 }
 
 bool Game::isWindowActive(UIWindow window) const
 {
     return active_windows_.count(window) > 0;
+}
+
+void Game::handleDisplayedComponentsUI()
+{
+    // make sure changes are discarded ALSO when player presses ESC
+    if (isWindowActive(UIWindow::EditMode) && IsKeyPressed(KEY_ESCAPE))
+    {
+        endEditMode(false);
+    }
+
+    action_bar_.draw(player_.getDurationGCD(), player_.getRemainingGCD());
+    hud_.drawPlayerFrame(player_);
+
+    if (current_target != nullptr)
+        hud_.drawTargetedFrame(*current_target);
+
+    if (isWindowActive(UIWindow::Settings))
+        hud_.drawSettingsWindow();
+
+    if (isWindowActive(UIWindow::EditMode))
+        drawEditMode();
+    
+    if (isWindowActive(UIWindow::Spellbook))
+        player_.getSpellbook().draw();
+}
+
+void Game::renderWorldComponents()
+{
+    renderer_.drawMap(map_);
+    renderer_.drawNameplate(player_);
+    renderer_.drawPlayer(player_);
+}
+
+void Game::updateDeltaTime()
+{
+    delta_time = GetFrameTime();
+    timer += delta_time;
+    if (timer >= 0.1f)
+    {
+        timer = 0.0f;
+        frame++;
+    }
+}
+
+void Game::handlePressedUIComponentKeybind(KeyboardKey keybind)
+{
+    switch (keybind) {
+        case KEY_P:
+            if (isWindowActive(UIWindow::Spellbook)) {
+                active_windows_.erase(UIWindow::Spellbook);
+                return;
+            }
+            active_windows_.insert(UIWindow::Spellbook);
+
+        
+
+    }
+
 }
 
 void Game::handleMenuClick()
@@ -415,6 +445,7 @@ void Game::handleMenuClick()
         endEditMode(false);
         return;
     }
+    
 }
 
 void Game::cachePositions()
