@@ -7,6 +7,7 @@ Player::Player(std::string name, PlayerClass playerClass)
       frame_number_{0},
       name_(name),
       anim_state_(AnimationState::IdleDown),
+      spellbook_{},
       last_direction_(Direction::None),
       player_class_(playerClass),
       is_attacking_(false),

@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <iostream>
+#include <unordered_set>
 
 #include "raylib.h"
 
@@ -29,6 +30,13 @@ enum class GameState
   //   Transition
 };
 
+enum class UIWindow {
+  None,
+  Settings,
+  Spellbook,
+  EditMode
+};
+
 class Game
 {
 public:
@@ -54,11 +62,10 @@ public:
 
   void handleDebugMode(); // open with 'T' keybind
   void handleEscapeKey();
+  bool isWindowActive(UIWindow window) const;
 
   // HUD relevant
   void handleMenuClick();
-  bool drawn_menu;
-  bool in_edit_mode;
   void cachePositions();
   void updateUI();
   void saveModifiedSlotsToSettings();
@@ -87,6 +94,7 @@ private:
   Button discard_btn_;
   Settings settings_;
 
+  std::unordered_set<UIWindow> active_windows_;
   std::vector<std::unique_ptr<Enemy>> enemies_;
   MeleeRangeCircle player_circle_;
 

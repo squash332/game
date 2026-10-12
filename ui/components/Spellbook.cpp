@@ -1,5 +1,15 @@
 #include "Spellbook.hpp"
 
+Spellbook::Spellbook() : spellbook_box_{0}
+{
+    spellbook_box_.height = (VIRTUAL_HEIGHT / 3) * 2;
+    spellbook_box_.width = VIRTUAL_WIDTH / 2;
+    spellbook_box_.x = BTN_PADDING;
+    spellbook_box_.y = VIRTUAL_HEIGHT / 2 + spellbook_box_.height / 2;
+
+    std:: cout <<"created spellbook !!"<< spellbook_box_.height << " "<< spellbook_box_.width << std::endl;
+}
+
 void Spellbook::addAbility(const Ability &ability)
 {
     abilities_.push_back(ability);
@@ -20,8 +30,7 @@ void Spellbook::loadForClass(PlayerClass playerClass)
                 .description = "A quick melee attack that deals damage.",
                 .damage = 20,
                 .cooldown = 3.0f,
-                .animType = AbilityAnim::Slash
-            },
+                .animType = AbilityAnim::Slash},
 
             Ability{
                 .id = 2,
@@ -31,9 +40,7 @@ void Spellbook::loadForClass(PlayerClass playerClass)
                 .damage = 10,
                 .cooldown = 0.0f,
                 .animType = AbilityAnim::Clap,
-                .requiresTarget = false
-            }
-        };
+                .requiresTarget = false}};
         break;
 
     case PlayerClass::Mage:
@@ -46,6 +53,13 @@ void Spellbook::loadForClass(PlayerClass playerClass)
     }
 }
 
+void Spellbook::draw()
+{
+
+    // spellbook size: width, about a third of screen width, height : 2/3's of screen height, centered in the middle
+    // draw texture that resembles a spellbook i guess ? sta
+    DrawRectangleRec(spellbook_box_, COLOR_WINDOW_BG);
+}
 
 Ability *Spellbook::getAbility(int id)
 {

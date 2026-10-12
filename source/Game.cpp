@@ -9,8 +9,6 @@ Game::Game()
       cam_(),
       hud_(),
       action_bar_(player_),
-      drawn_menu(false),
-      in_edit_mode(false),
       cached_player_frame_{0},
       cached_target_frame_{0},
       cached_focus_frame_{0},
@@ -18,6 +16,7 @@ Game::Game()
       discard_btn_{0},
       settings_{},
       cached_action_bar_{0},
+      active_windows_{},
       player_circle_{0}
 {
     enemies_.push_back(std::make_unique<Enemy>("knight"));
@@ -56,7 +55,7 @@ void Game::run()
         action_bar_.updateCooldowns(delta_time);
 
         // make sure changes are discarded ALSO when player presses ESC
-        if (in_edit_mode && IsKeyPressed(KEY_ESCAPE))
+        if (isWindowActive(UIWindow::EditMode) && IsKeyPressed(KEY_ESCAPE))
         {
             endEditMode(false);
         }
@@ -89,9 +88,9 @@ void Game::run()
         hud_.drawPlayerFrame(player_);
         if (current_target != nullptr)
             hud_.drawTargetedFrame(*current_target);
-        if (drawn_menu)
+        if (isWindowActive(UIWindow::Settings))
             hud_.drawSettingsWindow();
-        if (in_edit_mode)
+        if (isWindowActive(UIWindow::EditMode))
             drawEditMode();
 
         displayLogs();
@@ -104,7 +103,7 @@ void Game::handleLeftMouseClick()
 {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
-        if (!in_edit_mode)
+        if (!isWindowActive(UIWindow::EditMode))
         {
             handleTargetClick();
             handleAbilityClick();
@@ -167,7 +166,7 @@ void Game::handleTargetClick()
     // or maybe hide mouse while holding right click just like in wow or maybe untarget just with ESCAPE
 
     // compute mouse position in our game in relation to camera
-    if (in_edit_mode)
+    if (isWindowActive(UIWindow::EditMode))
         return;
     Vector2 mouseWorld = GetScreenToWorld2D(mouse, cam_.getCamera());
     // if player clicks on his player frame, nothing happens
@@ -377,24 +376,33 @@ void Game::handleEscapeKey()
         return;
     }
 
-    drawn_menu = !drawn_menu;
-    in_edit_mode = false;
+    if (!isWindowActive(UIWindow::Settings))
+        active_windows_.insert(UIWindow::Settings);
+    else
+        active_windows_.erase(UIWindow::Settings);
+
+    active_windows_.erase(UIWindow::EditMode);
+}
+
+bool Game::isWindowActive(UIWindow window) const
+{
+    return active_windows_.count(window) > 0;
 }
 
 void Game::handleMenuClick()
 {
     // if edit mode button clicked, hide menu, cache current positions and return
     // added and drawn_menu check to prevent from opening edit mode when clicking without the menu window open
-    if (CheckCollisionPointRec(mouse, hud_.getBtnEditModeBounds()) && drawn_menu)
+    if (CheckCollisionPointRec(mouse, hud_.getBtnEditModeBounds()) && isWindowActive(UIWindow::Settings))
     {
-        drawn_menu = false;
+        active_windows_.erase(UIWindow::Settings);
         cachePositions();
         std::cout << "clicked on edit mode" << std::endl;
         return;
     }
 
     // if not in edit mode, don't even check for button clicks
-    if (!in_edit_mode)
+    if (!isWindowActive(UIWindow::EditMode))
         return;
 
     if (CheckCollisionPointRec(mouse, save_btn_.bounds))
@@ -411,10 +419,10 @@ void Game::handleMenuClick()
 
 void Game::cachePositions()
 {
-    if (in_edit_mode)
+    if (isWindowActive(UIWindow::EditMode))
         return; // cache only once entering edit mode, then stop caching
 
-    in_edit_mode = true;
+    active_windows_.insert(UIWindow::EditMode);
     cached_player_frame_ = hud_.getPlayerFrame();
     cached_target_frame_ = hud_.getTargetFrame();
     cached_action_bar_ = action_bar_.getActionBar();
@@ -423,7 +431,7 @@ void Game::cachePositions()
 
 void Game::updateUI()
 {
-    if (in_edit_mode)
+    if (isWindowActive(UIWindow::EditMode)) // update everywhere and remove bools for in edit mode and menu
     {
         hud_.updateEditModeComponents();
         action_bar_.updateEditModeComponents();
@@ -467,7 +475,7 @@ void Game::drawEditMode()
 
 void Game::endEditMode(bool save)
 {
-    in_edit_mode = false;
+    active_windows_.erase(UIWindow::EditMode);
 
     if (save)
     {
