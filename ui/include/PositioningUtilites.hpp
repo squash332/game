@@ -27,11 +27,3 @@ inline Rectangle centerRectInRect(Rectangle outer, float innerWidth, float inner
         innerHeight
     };
 }
-
-inline void drawCenteredText(const std::string &text, Rectangle bounds, int fontSize, Color color)
-{
-    int textWidth = MeasureText(text.c_str(), fontSize);
-    float textX = bounds.x + (bounds.width - textWidth) / 2.0f;
-    float textY = bounds.y + (bounds.height - fontSize) / 2.0f;
-    DrawText(text.c_str(), (int)textX, (int)textY, fontSize, color);
-}

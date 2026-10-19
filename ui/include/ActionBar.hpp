@@ -7,6 +7,7 @@
 #include "Settings.hpp"
 #include "Ability.hpp"
 #include "Slot.hpp"
+#include "PixelSnap.hpp"
 
 #include "raylib.h"
 

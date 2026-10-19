@@ -7,6 +7,7 @@
 #include "Settings.hpp"
 #include "DragDropManager.hpp"
 #include "Mouse.hpp"
+#include "PixelSnap.hpp"
 
 struct Button
 {
@@ -31,7 +32,6 @@ public:
     void drawTargetedFrame(const Entity &other);
     // void drawFocusFrame(const Entity &other);
     void drawSettingsWindow();
-    void drawCenteredText(const std::string &text, Rectangle bounds, int fontSize, Color color);
     void drawButton(const Button &button, int fontSize, Color bgColor, Color textColor);
 
 

@@ -24,8 +24,8 @@ void HUD::buildSettingsHUD(Settings &settings) {
 // Draws the player's frame, containing icon, stats, castbar
 void HUD::drawPlayerFrame(const Player &player)
 {
-    DrawRectangleV({player_frame_.x, player_frame_.y}, {player_frame_.width, player_frame_.height}, DARKGRAY);
-    DrawRectangleV({player_frame_.x, player_frame_.y}, {player_frame_.width, player_frame_.height}, GREEN);
+    DrawRectangleVFloored({player_frame_.x, player_frame_.y}, {player_frame_.width, player_frame_.height}, DARKGRAY);
+    DrawRectangleVFloored({player_frame_.x, player_frame_.y}, {player_frame_.width, player_frame_.height}, GREEN);
 }
 
 // Draws the player's target frame (enemy/ally), containing icon, stats, castbar and it's targeted object
@@ -33,40 +33,32 @@ void HUD::drawTargetedFrame(const Entity &entity)
 {
     float ratio = (float)entity.getCurrentHealth() / (float)entity.getMaxHealth();
 
-    DrawRectangleV({targeted_frame_.x, targeted_frame_.y}, {targeted_frame_.width, targeted_frame_.height}, DARKGRAY);
+    DrawRectangleVFloored({targeted_frame_.x, targeted_frame_.y}, {targeted_frame_.width, targeted_frame_.height}, DARKGRAY);
 
     if (entity.is_ally_ == true)
     {
-        DrawRectangleV({targeted_frame_.x, targeted_frame_.y}, {targeted_frame_.width * ratio, targeted_frame_.height}, GREEN);
+        DrawRectangleVFloored({targeted_frame_.x, targeted_frame_.y}, {targeted_frame_.width * ratio, targeted_frame_.height}, GREEN);
     }
     else
     {
-        DrawRectangleV({targeted_frame_.x, targeted_frame_.y}, {targeted_frame_.width * ratio, targeted_frame_.height}, RED);
+        DrawRectangleVFloored({targeted_frame_.x, targeted_frame_.y}, {targeted_frame_.width * ratio, targeted_frame_.height}, RED);
     }
 }
 
 void HUD::drawSettingsWindow( )
 {
     // draw window
-    DrawRectangleRec(settings_window_, Fade(GRAY, 0.7));
+    drawRectangleFloored(settings_window_, Fade(GRAY, 0.7));
 
     // buttons on top of window
     drawButton(edit_mode_button_, FONT_SIZE, COLOR_BUTTON_BG, WHITE);
 }
 
-void HUD::drawCenteredText(const std::string &text, Rectangle bounds, int fontSize, Color color)
-{
-    int textWidth = MeasureText(text.c_str(), fontSize);
-    float textX = bounds.x + (bounds.width - textWidth) / 2.0f;
-    float textY = bounds.y + (bounds.height - fontSize) / 2.0f;
-
-    DrawText(text.c_str(), (int)textX, (int)textY, fontSize, color);
-}
 
 void HUD::drawButton(const Button &button, int fontSize, Color bgColor, Color textColor)
 {
-    DrawRectangleRec(button.bounds, bgColor);
-    drawCenteredText(button.label, button.bounds, fontSize, textColor);
+    drawRectangleFloored(button.bounds, bgColor);
+    drawCenteredTextFloored(button.label, button.bounds, fontSize, textColor);
 
 }
 

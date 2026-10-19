@@ -485,11 +485,11 @@ void Game::saveModifiedSlotsToSettings()
 void Game::drawEditMode()
 {
     Rectangle edit_mode_window = centerRectOnScreen(VIRTUAL_HEIGHT / 1.5, VIRTUAL_HEIGHT / 3);
-    DrawRectangleRec(edit_mode_window, COLOR_WINDOW_BG);
+    drawRectangleFloored(edit_mode_window, COLOR_WINDOW_BG);
 
     // buttons: Discard Changes & Save
     Rectangle centerRec = centerRectInRect(edit_mode_window, VIRTUAL_HEIGHT / 1.5, VIRTUAL_HEIGHT / 3);
-    DrawRectangleRec(centerRec, COLOR_WINDOW_BG);
+    drawRectangleFloored(centerRec, COLOR_WINDOW_BG);
     save_btn_ = {centerRectInRect(edit_mode_window, edit_mode_window.width / 4, edit_mode_window.height / 4), "Save"};
 
     discard_btn_ = save_btn_;
@@ -499,9 +499,9 @@ void Game::drawEditMode()
     hud_.drawButton(save_btn_, FONT_SIZE, BLACK, WHITE);
     hud_.drawButton(discard_btn_, FONT_SIZE, BLACK, WHITE);
 
-    DrawRectangleLinesEx(hud_.getPlayerFrame(), 2.0f, COLOR_EDITABLE_COMPONENT);
-    DrawRectangleLinesEx(hud_.getTargetFrame(), 2.0f, COLOR_EDITABLE_COMPONENT);
-    DrawRectangleLinesEx(action_bar_.getActionBar(), 2.0f, COLOR_EDITABLE_COMPONENT);
+    drawRectangleLinesExFloored(hud_.getPlayerFrame(), 2.0f, COLOR_EDITABLE_COMPONENT);
+    drawRectangleLinesExFloored(hud_.getTargetFrame(), 2.0f, COLOR_EDITABLE_COMPONENT);
+    drawRectangleLinesExFloored(action_bar_.getActionBar(), 2.0f, COLOR_EDITABLE_COMPONENT);
 }
 
 void Game::endEditMode(bool save)

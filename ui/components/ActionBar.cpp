@@ -58,8 +58,7 @@ void ActionBar::buildDefaultActionBar()
 
 void ActionBar::draw(float gcd, float gcdRemaining)
 {
-
-    DrawRectangleRec(action_bar_, COLOR_WINDOW_BG);
+    drawRectangleFloored(action_bar_, COLOR_WINDOW_BG);
 
     for (size_t i = 0; i < slots_.size(); i++)
     {
@@ -69,18 +68,18 @@ void ActionBar::draw(float gcd, float gcdRemaining)
         // assign an ability to a slot with a certain keybind
         if (!slot.empty() && i != grabbed_slot_)
         {
-            DrawTextureV(slot.ability->icon, {floorf(bounds.x), floorf(bounds.y)}, WHITE);
+            drawTextureFloored(slot.ability->icon, {bounds.x, bounds.y}, WHITE);
             drawCooldown(bounds, *slot.ability, i, gcd, gcdRemaining);
         }
         else
-            DrawRectangleRec(bounds, Fade(RED, 0.4f));
+            drawRectangleFloored(bounds, Fade(RED, 0.4f));
 
         drawKeybind(bounds, i);
     }
 
     if (grabbed_slot_ >= 0 && !slots_[grabbed_slot_].empty())
     {
-        DrawTextureV(slots_[grabbed_slot_].ability->icon, mouse, WHITE);
+        drawTextureFloored(slots_[grabbed_slot_].ability->icon, mouse, WHITE);
     }
 }
 
@@ -263,16 +262,11 @@ void ActionBar::drawCooldown(Rectangle bounds, const Ability &ability, int i, fl
 
     const float overlayHeight = slots_[i].size * (remaining / total);
 
-    int top = (int)floorf(bounds.y + size - overlayHeight);
-    int bottom = (int)floorf(bounds.y + size);
-    int height = bottom - top;
+    float top = (int)floorf(bounds.y + size - overlayHeight);
+    float bottom = (int)floorf(bounds.y + size);
+    float height = bottom - top;
 
-    DrawRectangle(
-        int(floorf(bounds.x)),
-        top,
-        int(size),
-        height,
-        Fade(BLACK, 0.6f));
+    drawRectangleFloored({bounds.x, top, size, height}, Fade(BLACK, 0.6f));
 
     if (useAbilityCD)
     {
@@ -293,8 +287,8 @@ void ActionBar::drawKeybind(Rectangle bounds, int i)
 
     DrawText(
         label.c_str(),
-        bounds.x + 2,
-        bounds.y + 2,
+        (int)floorf(bounds.x + 2),
+        (int)floorf(bounds.y + 2),
         8,
         WHITE);
 }
